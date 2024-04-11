@@ -17,7 +17,8 @@ const Login = () => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
   const [selectedImg, setSelectedImg] = useState(null);
-  
+  const [fileError,setFileError]=useState(null);
+  const allowedExtensions=['jpeg' || 'jpg' || 'png'];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,13 +41,20 @@ const Login = () => {
 
   const handleImgChange=(e)=>{
     const file=e.target.files[0];
-    if(file)
+    const fileName=file.name;
+    const fileExtension=fileName.split('.').pop();
+    const ifEndsWith= allowedExtensions.some(ext => fileExtension);
+    if(fileName && ifEndsWith)
     {
       const reader=new FileReader();
       reader.onload=(e)=>{
         setSelectedImg(e.target.result);
       }
       reader.readAsDataURL(file);
+    }
+    else
+    {
+      setFileError('Please upload a file with a .jpg or .png or .jpeg extension');
     }
   }
 
@@ -110,6 +118,7 @@ const Login = () => {
           sx={{width:"10rem",height:"10rem",mt:"13px",objectFit:"contained"}} 
           />
           <input type="file" onChange={handleImgChange} style={{ display: 'none' }} accept="image/*" id="avatar-input"/>
+          {fileError && <p style={{margin:"-5px",color:"red"}}>{fileError}</p>}
           <label htmlFor='avatar-input'>
           <IconButton sx={{position:"absolute" ,bottom: "0" ,right: "0"}} component="span">
             <CameraAltIcon/>  
