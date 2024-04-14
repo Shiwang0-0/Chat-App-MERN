@@ -1,7 +1,7 @@
 import React, { Suspense, useState, lazy } from 'react'
 import { Box } from '@mui/system'
 import { royalBlue,random } from '../../constants/colors'
-import {IconButton, Typography,TextField } from '@mui/material'
+import {IconButton, Typography,TextField,Backdrop } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -9,6 +9,7 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import {useNavigate } from 'react-router-dom';
+import Loader from './Loader';
 
 const SearchDialog = lazy(()=>import("../specific/SearchDialog"));
 const NotificationDialog=lazy(()=>import("../specific/NotificationDialog"));
@@ -53,7 +54,7 @@ const NavigationPanel = () => {
 
   return (
     <>
-    <Box sx={{ bgcolor: royalBlue, height: '90vh', display:"flex", flexDirection:"column", alignItems:"center", mt:"10px",ml:"5px", overflow:"none"}} >
+    <Box sx={{ bgcolor: royalBlue, height: '90vh', display:"flex", flexDirection:"column", alignItems:"center", mt:"10px",ml:"5px",mr:"5px", overflow:"none"}} >
 
         <NavigationBars title={"Home"} icon={<HomeIcon/>} onClickfunc={navigateToHome}/>
         <NavigationBars title={"Search"} icon={<SearchIcon/>} onClickfunc={searchDialog}/>
@@ -64,17 +65,17 @@ const NavigationPanel = () => {
     </Box>
 
     {isSearch && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Backdrop open/>}>
             <SearchDialog/>
         </Suspense>
     )}
     {isNotification && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Backdrop open/>}>
             <NotificationDialog/>
         </Suspense>
     )}
     {isNewGroup && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Backdrop open/>}>
             <NewGroupDialog/>
         </Suspense>
     )}

@@ -1,4 +1,4 @@
-import { AppBar,Box, IconButton, Tooltip, Typography } from '@mui/material'
+import { AppBar,Backdrop,Box, IconButton, Tooltip, Typography } from '@mui/material'
 import React,{ useState,Suspense, lazy} from 'react'
 import { royalBlue } from '../../constants/colors'
 import SearchIcon from '@mui/icons-material/Search';
@@ -29,7 +29,7 @@ const Header = () => {
       </Box>
 
     {isSearch && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Backdrop open/>}>  
             <SearchDialog/>
         </Suspense>
     )}
