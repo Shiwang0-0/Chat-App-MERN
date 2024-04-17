@@ -1,12 +1,25 @@
 import React from 'react'
 import Header from './Header'
 import Title from '../shared/Title'
-import { Grid, NativeSelect } from '@mui/material'
+import { Grid, NativeSelect, Typography } from '@mui/material'
 import NavigationPanel from './NavigationPanel'
 import ChatList from '../specific/ChatList'
+import { sampleChats } from '../../constants/sampleChats'
+import { useParams } from 'react-router-dom'
 // Higher order components
 const AppLayout = ()=>(WrapperComponent) =>{
-  return(props)=>{
+
+
+  const handleDeleteChat=(e,_id,groupChat)=>{
+    e.preventDefault();
+    console.log("deleteChat: ",_id,groupChat)
+  }
+ 
+  
+
+  return(props)=>{ 
+    const params=useParams();
+    const chatId=params.chatId;
     return (
         <>
         <Title />
@@ -26,7 +39,7 @@ const AppLayout = ()=>(WrapperComponent) =>{
             <Grid item xs={3} 
             sx={{display:{xs:"none",sm:"block"} }} 
             height={"100%"} >
-              <ChatList/>
+              <ChatList chats={sampleChats} chatId={chatId} handleDeleteChat={handleDeleteChat}/>
             </Grid>
           </Grid>
         </>
