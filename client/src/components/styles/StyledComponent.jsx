@@ -1,4 +1,5 @@
 import { styled } from '@mui/material'
+import { Link } from 'react-router-dom';
 
 export const VisuallyHiddenInput =styled("input")({
     overflow:'hidden',
@@ -8,3 +9,13 @@ export const VisuallyHiddenInput =styled("input")({
     height:1,
     width:1,
 });
+
+
+export const StyledLink= styled(Link)`
+    text-decoration:none;
+    color:black;
+    height:"1rem";
+    &:hover {
+        background-color:black;
+    }
+`;
