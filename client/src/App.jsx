@@ -8,6 +8,7 @@ const Login=lazy(()=>import("./pages/Login.jsx"))
 const Chat=lazy(()=>import("./pages/Chat.jsx"))
 const Group=lazy(()=>import("./pages/Group.jsx"))
 const NotFound=lazy(()=>import("./pages/NotFound.jsx"))
+const Profile=lazy(()=>import("./pages/Profile.jsx"))
 
 const App = () => {
   let user=true;
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/" element={<Home/>}/>
         <Route path="/chat/:chatId" element={<Chat/>}/>
         <Route path="/group" element={<Group/>}/>
+        <Route path="/profile" element={<Profile/>}/>
       </Route>
 
       <Route path="/login" element={<ProtectedRoute user={!user} redirect="/">
