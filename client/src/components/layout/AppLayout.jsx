@@ -5,10 +5,13 @@ import { Grid, NativeSelect, Typography } from '@mui/material'
 import NavigationPanel from './NavigationPanel'
 import ChatList from '../specific/ChatList'
 import { sampleChats } from '../../constants/sampleChats'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
+import ProfileSetting from '../specific/ProfileSetting'
+
 // Higher order components
 const AppLayout = ()=>(WrapperComponent) =>{
 
+    
 
   const handleDeleteChat=(e,_id,groupChat)=>{
     e.preventDefault();
@@ -18,6 +21,8 @@ const AppLayout = ()=>(WrapperComponent) =>{
   
 
   return(props)=>{ 
+    const location=useLocation();
+    const isProfilePage=location.pathname==='/profile'
     const params=useParams();
     const chatId=params.chatId;
     return (
@@ -39,7 +44,9 @@ const AppLayout = ()=>(WrapperComponent) =>{
             <Grid item xs={3} 
             sx={{display:{xs:"none",sm:"block"} }} 
             height={"100%"} >
-              <ChatList chats={sampleChats} chatId={chatId} handleDeleteChat={handleDeleteChat}/>
+              {isProfilePage? <ProfileSetting/> :
+               (<ChatList chats={sampleChats} chatId={chatId} handleDeleteChat={handleDeleteChat}/>)
+               }
             </Grid>
           </Grid>
         </>
