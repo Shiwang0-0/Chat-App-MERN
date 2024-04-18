@@ -10,6 +10,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import {useNavigate } from 'react-router-dom';
 import Loader from './Loader';
+import { NavigationBars } from '../shared/NavigationBars';
 
 const SearchDialog = lazy(()=>import("../specific/SearchDialog"));
 const NotificationDialog=lazy(()=>import("../specific/NotificationDialog"));
@@ -47,9 +48,8 @@ const NavigationPanel = () => {
         console.log("create group");
         setIsNewGroup((prev)=>!prev);
     }
-    const viewProfile=()=>{
-        console.log("profile");
-
+    const navigateToProfile=()=>{    
+        navigate("/profile")
     }
 
   return (
@@ -61,7 +61,7 @@ const NavigationPanel = () => {
         <NavigationBars title={"Notifications"} icon={<NotificationsNoneIcon/>} onClickfunc={openNotifications}/>
         <NavigationBars title={"Groups"} icon={<GroupsIcon/>} onClickfunc={navigateToGroups}/>
         <NavigationBars title={"Create Group"} icon={<GroupAddIcon/>} onClickfunc={createGroup}/>
-        <NavigationBars title={"Profile"} icon={<AccountCircleIcon/>} onClickfunc={viewProfile}/>
+        <NavigationBars title={"Profile"} icon={<AccountCircleIcon/>} onClickfunc={navigateToProfile}/>
     </Box>
 
     {isSearch && (
@@ -84,17 +84,6 @@ const NavigationPanel = () => {
   )
 }
 
-const NavigationBars=({title,icon,onClickfunc})=>{
-   return (
-    <Box sx={{mt:"15px",bgcolor:random,borderRadius:"6px",width:"70%",height:"40px",display: 'flex', alignItems: 'center', justifyContent: 'center'}} >
-    <IconButton onClick={onClickfunc}>
-        {icon}
-    </IconButton>
-    <Typography sx={{textAlign: 'center'}} >
-        {title}
-    </Typography>   
-    </Box>
-   )
-}
+
 
 export default NavigationPanel
