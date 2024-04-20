@@ -14,3 +14,17 @@ export const sampleChats=[
       members:["1","2"]
       },
   ] 
+
+
+export const sampleSearchs=[
+    {
+    name:"hulala",
+    _id:"1",
+    avatar:"https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg"
+    },
+    {
+      name:"sdfsdfadf",
+      _id:"2",
+      avatar:"https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg"
+      },
+  ] 
