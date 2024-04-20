@@ -28,3 +28,20 @@ export const sampleSearchs=[
       avatar:"https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg"
       },
   ] 
+
+  export const sampleNotifications=[
+    {
+      sender:{
+        name:"hulala",
+        avatar:"https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg"
+      },
+      _id:"1",
+    },
+    {
+      sender:{
+        name:"sdsdsd",
+        avatar:"https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg"
+      },
+      _id:"2",
+    }
+  ] 
