@@ -1,9 +1,9 @@
-import { Avatar, IconButton, Typography,Stack,ListItem } from '@mui/material'
-import React from 'react'
 import AddIcon from '@mui/icons-material/Add';
-import { memo } from 'react';
+import PersonRemove from '@mui/icons-material/PersonRemove';
+import { Avatar, IconButton, ListItem, Stack, Typography } from '@mui/material';
+import React, { memo } from 'react';
 
-const UserItem = ({users,handler,handlerLoading}) => {
+const UserItem = ({users,handler,handlerLoading,isAdded=false}) => {
 
     if(!users)
       return null;
@@ -24,9 +24,12 @@ const UserItem = ({users,handler,handlerLoading}) => {
               justifyItems:"center",
               ml:"8px",
               mt:"6px"
-            }}fullWidth>{name}</Typography>
+            }}>{name}</Typography>
             <IconButton onClick={()=>{handler(_id)}} disabled={handlerLoading}>
-                <AddIcon/>
+              {
+                isAdded?<PersonRemove/>:<AddIcon/>
+              }
+                
             </IconButton>   
         </Stack>
     </ListItem>
