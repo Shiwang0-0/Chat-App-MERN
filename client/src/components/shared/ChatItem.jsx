@@ -4,6 +4,7 @@ import { memo } from 'react'
 import { royalBlue,random2,random3 } from '../../constants/colors'
 import { StyledLink } from '../styles/StyledComponent'
 import AvatarCard from './AvatarCard'
+import { transformImage } from '../../lib/fileFormat'
 
 const ChatItem = (
   {avatar=[],
@@ -29,7 +30,7 @@ const ChatItem = (
         color:sameSender? "unset" : random2 ,
       }}>
 
-      <AvatarCard avatar={avatar}/>
+      <AvatarCard avatar={transformImage(avatar)}/>
       <Stack >
       <Typography ml="0.5rem" >{name}</Typography>
     {newMessageAlert && (

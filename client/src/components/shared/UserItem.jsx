@@ -2,7 +2,7 @@ import AddIcon from '@mui/icons-material/Add';
 import PersonRemove from '@mui/icons-material/PersonRemove';
 import { Avatar, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import React, { memo } from 'react';
-
+import { transformImage } from '../../lib/fileFormat';
 const UserItem = ({users,handler,handlerLoading,isAdded=false}) => {
 
     if(!users)
@@ -13,7 +13,7 @@ const UserItem = ({users,handler,handlerLoading,isAdded=false}) => {
   return (
     <ListItem >
         <Stack direction="row" width="100%">
-            <Avatar src={avatar}/>
+            <Avatar src={transformImage(avatar)}/>
             <Typography sx={{
               display:"-webkit-box",
               WebkitLineClamp:1,
