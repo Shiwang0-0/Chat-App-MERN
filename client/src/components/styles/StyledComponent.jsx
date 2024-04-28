@@ -19,3 +19,11 @@ export const StyledLink= styled(Link)`
         background-color:black;
     }
 `;
+
+export const InputBox=styled("input")
+({
+    width:"100%",
+    height:"100%",
+    border:"none",
+    backgroundColor:"yellow"
+})
