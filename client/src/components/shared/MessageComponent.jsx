@@ -2,7 +2,7 @@ import { Typography, Box } from '@mui/material';
 import React, {memo} from 'react'
 import moment from "moment"
 import { fileFormat } from '../../lib/fileFormat';
-import {RenderAttachment }from './RenderAttachment';
+import RenderAttachment from "./RenderAttachment"
 
 
 const MessageComponent = ({message,user}) => {

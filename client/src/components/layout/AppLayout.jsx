@@ -29,21 +29,21 @@ const AppLayout = ()=>(WrapperComponent) =>{
         <>
         <Title />
           <Header/>
-          <Grid container height={"calc(100vh-4rem"}>
+          <Grid container height={"calc(100vh - 4rem)"}>
             <Grid item xs={3}
              sx={{
               display:{xs:"none",sm:"block"} }}
-              height={"100%"} >
+              height="100%" >
               <NavigationPanel/>
             </Grid>
-            <Grid item xs={6} 
-            sx={{display:{xs:"block"} }} 
-            height={"100%"} >
+            <Grid item xs={6} style={{ height: '100%' }}
+            sx={{display:{xs:"block"} ,backgroundColor:"blue"}} 
+            >
               <WrapperComponent {...props}/>
             </Grid>
             <Grid item xs={3} 
             sx={{display:{xs:"none",sm:"block"} }} 
-            height={"100%"} >
+            height="100%" >
               {isProfilePage? <ProfileSetting/> :
                (<ChatList chats={sampleChats} chatId={chatId} handleDeleteChat={handleDeleteChat}/>)
                }

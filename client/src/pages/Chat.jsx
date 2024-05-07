@@ -13,10 +13,10 @@ const user={
   name:"dfsdfasd"
 }
 
-const Chat = () => {
+export const Chat = () => {
   return (
     <>
-    <Stack height="93%" sx={{ backgroundColor:orange, overflowX:"hidden", overflowY:"auto"}}>
+    <Stack height="93%" sx={{ backgroundColor:'#ff1744', overflowX:"hidden", overflowY:"auto"}}>
     {sampleMsg.map((message)=>(
         <MessageComponent message={message} user={user} key={message._id}/>
     ))}

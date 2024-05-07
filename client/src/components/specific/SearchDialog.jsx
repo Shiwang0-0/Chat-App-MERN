@@ -1,10 +1,9 @@
-import { Dialog, DialogTitle, Stack, TextField, List } from '@mui/material'
-import React from 'react'
 import SearchIcon from '@mui/icons-material/Search';
+import { Dialog, DialogTitle, List, Stack, TextField } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
-import UserItem from '../shared/UserItem';
+import React, { useState } from 'react';
 import { sampleSearchs } from '../../constants/sampleChats';
-import { useState } from 'react';
+import UserItem from '../shared/UserItem';
 
 const SearchDialog = () => {
 
@@ -17,9 +16,9 @@ const SearchDialog = () => {
   }
   
   return (
-    <div>
+    <>
       <Dialog open>
-        <Stack padding= "1rem">
+        <Stack padding={{xs:"1rem",sm:"3rem"}}>
           <DialogTitle textAlign="center">Search people</DialogTitle>
           <TextField  label="" variant="outlined" 
           InputProps={{
@@ -40,7 +39,7 @@ const SearchDialog = () => {
         </Stack>
         <UserItem />
       </Dialog>
-    </div>
+    </>
   )
 }
 
