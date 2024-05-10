@@ -1,6 +1,6 @@
 import { compare } from "bcrypt";
 import { User } from "../models/user.js"
-import { sendtoken } from "../utils/token.js";
+import { cookieOption, sendtoken } from "../utils/token.js";
 import { tryCatch } from "../middlewares/error.js";
 import { customError } from "../middlewares/error.js";
 
@@ -36,4 +36,27 @@ const login = tryCatch(async(req,res,next)=>{
         sendtoken(res,user,201,"User Logged in")   
 })
 
-export {login,newUser};
+
+const myProfile=async(req,res)=>{
+    const userId=req.user._id;
+    
+    const user=await User.findById(userId);
+    if(!user)
+        return next(new customError("Cannot find user",403));
+
+    res.status(200).json({
+        success:true,
+        user:user
+    })
+}
+
+
+const logout=async(req,res)=>{
+
+    return res.status(200).cookie("val-token","",{...cookieOption,maxAge:0}).json({
+        success:true,
+        message:"Logout Successful"
+    })
+}
+
+export {login,newUser,myProfile,logout};
