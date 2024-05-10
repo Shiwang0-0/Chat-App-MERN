@@ -17,4 +17,4 @@ const sendtoken=(res,user,code,message)=>{
     })
 }
 
-export {sendtoken}
+export {sendtoken,cookieOption}
