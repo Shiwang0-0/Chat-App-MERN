@@ -1,10 +1,10 @@
 const errorMiddleware=(err,req,res,next)=>{
     err.message=err.message || "Sorry, Please try again";
-    err.status=err.status || 500;
+    err.statusCode=err.statusCode || 500;
 
-    return res.status(err.status).json({
+    return res.status(err.statusCode).json({
         success:false,
-        messagesss:err.message, 
+        messages:err.message, 
     })
 }
 
