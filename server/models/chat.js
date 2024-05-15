@@ -9,6 +9,14 @@ const schema =new Schema({
         type:Boolean,
         default:false,
     },
+    groupAvatar:{
+        public_id:{
+            type:String,
+        },
+        url:{
+            type:String,
+        }
+    },
     creator:{
         type:Types.ObjectId,
         ref:"User"
