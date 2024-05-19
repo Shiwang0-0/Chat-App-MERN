@@ -1,6 +1,6 @@
 import mongoose, { Schema, model, Types } from "mongoose";
 
-const   a =new Schema({
+const schema =new Schema({
     status:{
         type:String,
         default:"Pending",
