@@ -1,6 +1,6 @@
+import { faker } from "@faker-js/faker";
 import { tryCatch } from "../middlewares/error.js";
 import { User } from "../models/user.js";
-import {faker} from "@faker-js/faker"
 
 const createUser=tryCatch(async(numUsers)=>{
     const users=[];
@@ -23,4 +23,6 @@ const createUser=tryCatch(async(numUsers)=>{
     process.exit(1);
 })
 
-export {createUser}
+
+export { createUser };
+
