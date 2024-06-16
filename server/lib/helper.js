@@ -9,3 +9,11 @@ export const usersSockets=(members=[])=>{
 
     return sockets;
 }
+
+export const toBase64 = (file) => {
+    if (file && file.buffer) {
+        return `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
+    } else {
+        console.error("File buffer is undefined or null");
+    }
+};

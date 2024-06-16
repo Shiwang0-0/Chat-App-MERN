@@ -7,20 +7,25 @@ import { Request } from "../models/request.js";
 import { User } from "../models/user.js";
 import { emitEvent } from "../utils/eventEmitter.js";
 import { cookieOption, sendtoken } from "../utils/token.js";
+import { uploadFilesToCloudinary } from "../utils/cloudinary.js";
 
 const newUser=tryCatch(async(req,res)=>{
-
-    const {name,username,password}=req.body;
-
-    const avatar={
-        public_id:"sdfsdf",
-        url:"Sfsdf"
-    }
-
+    const { name, username, password} = req.body;
+    const file = req.file;
+    let avatar=null;
+    if(file)
+        {
+            const uploadedFile=await uploadFilesToCloudinary([file])
+             avatar={
+                public_id:uploadedFile[0].public_id,
+                url:uploadedFile[0].secure_url
+            }
+        }
     const user= await User.create({name,username,password,avatar});
     if(!user)
-        return next(new customError("Error, Please try again",500));
-
+        {
+            return next(new customError("Error, Please try again",500));
+        }
     sendtoken(res,user,201,"User created")
 })
 
@@ -41,7 +46,7 @@ const login = tryCatch(async(req,res,next)=>{
 })
 
 
-const myProfile=async(req,res)=>{
+const myProfile=async(req,res,next)=>{
     const userId=req.user._id;
     
     const user=await User.findById(userId);
