@@ -1,12 +1,12 @@
 import axios from 'axios';
 import React, { Suspense, lazy, useEffect } from 'react';
+import { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Loader from './components/layout/Loader.jsx';
 import ProtectedRoute from './components/styles/auth/ProtectedRoute.jsx';
 import { server } from './constants/configServer.js';
 import { userExist, userNotExist } from './redux/reducers/auth.js';
-import { Toaster } from "react-hot-toast";
 
 const Home= lazy(()=>import("./pages/Home.jsx"));
 const Login=lazy(()=>import("./pages/Login.jsx"))
@@ -19,12 +19,13 @@ const Profile=lazy(()=>import("./pages/Profile.jsx"))
 const App = () => {
   
   const {user,loader}=useSelector(state=>state.auth);
+
   const dispatch=useDispatch();
 
   useEffect(()=>{
     axios
     .get(`${server}/api/v1/user/myprofile`,{withCredentials:true})
-    .then((data)=>dispatch(userExist(data.user)))
+    .then(({data})=>dispatch(userExist(data.user)))
     .catch((err)=>dispatch(userNotExist()))
   },[dispatch])
 
@@ -37,7 +38,7 @@ const App = () => {
         <Route path="/" element={<Home/>}/>
         <Route path="/chat/:chatId" element={<Chat/>}/>
         <Route path="/group" element={<Group/>}/>
-        <Route path="/profile" element={<Profile/>}/>
+        <Route path="/profile" element={<Profile user={user}/>}/>
       </Route>
 
       <Route path="/login" element={<ProtectedRoute user={!user} redirect="/">
