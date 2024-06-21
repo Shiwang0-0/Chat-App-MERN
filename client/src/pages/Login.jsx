@@ -68,7 +68,7 @@ const Login = () => {
     }
     
     try {
-      const data = await axios.post(`${server}/api/v1/user/login`,
+      const {data} = await axios.post(`${server}/api/v1/user/login`,
         {
           username: formValues.username,
           password: formValues.password,
@@ -80,7 +80,7 @@ const Login = () => {
           }
         }
       );
-      dispatch(userExist(true));
+      dispatch(userExist(data.success));
       toast.success(data.message);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -102,13 +102,13 @@ const Login = () => {
       formData.append("confirmpassword", formValues.confirmpassword);
   
     
-      const data = await axios.post(`${server}/api/v1/user/register`, formData, {
+      const {data} = await axios.post(`${server}/api/v1/user/register`, formData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      dispatch(userExist(true));
+      dispatch(userExist(data.user));
       toast.success(data.message);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
