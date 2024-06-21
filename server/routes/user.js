@@ -6,13 +6,13 @@ import { multerSingleAvatar } from "../middlewares/multer.js";
 
 const app=express.Router();
 
-app.post("/new",multerSingleAvatar, registerValidator(), validationHandler, newUser);
+app.post("/register",multerSingleAvatar, registerValidator(), validationHandler, newUser);
 
 app.post("/login", loginValidator(), validationHandler, login);
 
 app.use(isAuthenticated);
 
-app.get("/me",myProfile);
+app.get("/myprofile",myProfile);
 
 app.get("/logout",logout);
 
