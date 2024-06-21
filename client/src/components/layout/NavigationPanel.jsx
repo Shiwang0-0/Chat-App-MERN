@@ -1,16 +1,17 @@
-import React, { Suspense, useState, lazy } from 'react'
-import { Box } from '@mui/system'
-import { royalBlue,random } from '../../constants/colors'
-import {IconButton, Typography,TextField,Backdrop } from '@mui/material'
-import HomeIcon from '@mui/icons-material/Home';
-import SearchIcon from '@mui/icons-material/Search';
-import GroupsIcon from '@mui/icons-material/Groups';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import GroupsIcon from '@mui/icons-material/Groups';
+import HomeIcon from '@mui/icons-material/Home';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import {useNavigate } from 'react-router-dom';
-import Loader from './Loader';
+import SearchIcon from '@mui/icons-material/Search';
+import { Backdrop } from '@mui/material';
+import { Box } from '@mui/system';
+import React, { Suspense, lazy, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { royalBlue } from '../../constants/colors';
 import { NavigationBars } from '../shared/NavigationBars';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsNotification } from '../../redux/reducers/others.';
 
 const SearchDialog = lazy(()=>import("../specific/SearchDialog"));
 const NotificationDialog=lazy(()=>import("../specific/NotificationDialog"));
@@ -23,7 +24,9 @@ const NavigationPanel = () => {
     const [isMobile,setIsMobile]=useState(false);
     const [isSearch,setIsSearch]=useState(false);
     const [isNewGroup,setIsNewGroup]=useState(false);
-    const [isNotification,setIsNotification]=useState(false);
+
+    const dispatch=useDispatch();
+    const {isNotification}=useSelector(state=>state.misc)
 
     const handleMobile=()=>{
         setIsMobile((prev)=>!prev);
@@ -39,7 +42,7 @@ const NavigationPanel = () => {
     }
     const openNotifications=()=>{
         console.log("notification")
-        setIsNotification((prev)=>!prev);
+        dispatch(setIsNotification(true))
     }
     const navigateToGroups=()=>{    
         navigate("/group")
