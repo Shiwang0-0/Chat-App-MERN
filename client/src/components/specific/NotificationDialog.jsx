@@ -1,33 +1,66 @@
-import { Dialog, DialogTitle,Stack, Typography,Avatar,List,ListItem, IconButton } from '@mui/material'
-import React, { memo } from 'react'
-import { sampleNotifications } from '../../constants/sampleChats';
-import DoneIcon from '@mui/icons-material/Done';
 import CancelIcon from '@mui/icons-material/Cancel';
+import DoneIcon from '@mui/icons-material/Done';
+import { Avatar, Dialog, DialogTitle, IconButton, List, ListItem, Skeleton, Stack, Typography } from '@mui/material';
+import React, { memo } from 'react';
+import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { useAcceptFriendRequestMutation, useGetNotificationsQuery } from '../../redux/api/api';
+import { setIsNotification } from '../../redux/reducers/others.';
 
 const NotificationDialog = () => {
 
-  const handleFriendRequest=({_id,isAccepted})=>{
-    isAccepted?(console.log(`${_id} accepted friend req`)):(console.log(`${_id} rejected friend req`))
+  const dispatch=useDispatch();
+  const {isNotification}=useSelector((state)=>state.misc)
+  const [acceptRequest]=useAcceptFriendRequestMutation();
+
+  const {isLoading,isError,error,data}=useGetNotificationsQuery()
+
+  const handleFriendRequest=async ({_id,accept})=>{
+    dispatch(setIsNotification(false));
+
+    try{
+      const res=await acceptRequest({requestId:_id,accept});
+      if(res.data?.success)
+      {
+          console.log("use sockets here")
+          toast.success(res.data.message)
+      }
+      else{
+        toast.error(res.data?.error || "Something went wrong")
+      }
+    }
+    catch(error)
+    {
+      toast.error("Something went wrong")
+    }
+  }
+
+  const handleClose=()=>{
+   dispatch(setIsNotification(false))
   }
 
   return (
-    <Dialog open>
+    <Dialog open={isNotification} onClose={handleClose}>
         <Stack padding= "1rem">
           <DialogTitle textAlign="center">Notifications</DialogTitle>
-          {
-            sampleNotifications.length>0?(
-              <List>
-              {
-              sampleNotifications.map((i)=>(
-              <NotificationItem notification={i} key={i._id} handler={handleFriendRequest} />  
-              ))
-              }
-            </List>      
-            ):
-            (
-              <Typography>you have 0 notifications</Typography>
-            )
-          }
+          {isLoading?<Skeleton/>
+          :
+          <>{
+            
+            data?.allRequests?.length>0?(
+               <List>
+               {
+               data?.allRequests?.map((i)=>(
+               <NotificationItem notification={i} key={i._id} _id={i._id} handler={handleFriendRequest} />  
+               ))
+               }
+             </List>      
+             ):
+             (
+               <Typography>you have 0 notifications</Typography>
+             )
+           }</>
+           }
           
         </Stack>
       </Dialog>
@@ -36,7 +69,6 @@ const NotificationDialog = () => {
 
 const NotificationItem=memo(({notification,handler})=>{
   const {sender,_id}=notification;
-
   const {name,avatar}=sender;
   return (
     <ListItem >
@@ -53,10 +85,12 @@ const NotificationItem=memo(({notification,handler})=>{
               ml:"8px",
               mt:"6px"
             }}>{name}</Typography>
-            <IconButton onClick={()=>handler({_id,isAccepted:true})}>
+            <IconButton onClick={()=>{
+              handler({_id,accept:true})
+              }}>
               <DoneIcon /> 
             </IconButton> 
-            <IconButton onClick={()=>handler({_id,isAccepted:false})}>
+            <IconButton onClick={()=>handler({_id,accept:false})}>
               <CancelIcon />
             </IconButton>
               
