@@ -1,16 +1,24 @@
-import { AppBar,Backdrop,Box, IconButton, Tooltip, Typography } from '@mui/material'
-import React,{ useState,Suspense, lazy} from 'react'
-import { royalBlue } from '../../constants/colors'
+import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-
+import { AppBar, Backdrop, Box, Tooltip, Typography } from '@mui/material';
+import React, { Suspense, lazy } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { royalBlue } from '../../constants/colors';
+import { setIsMobile, setIsSearch } from '../../redux/reducers/others.';
 const SearchDialog = lazy(()=>import("../specific/SearchDialog"));
 
 const Header = () => {
-  const [isSearch,setIsSearch]=useState(false);
+  const dispatch=useDispatch();
+  const {isSearch}=useSelector(state=>state.misc)
+
   const searchDialog=()=>{
     console.log("search");
-    setIsSearch((prev)=>!prev);
+    dispatch(setIsSearch(true));
 }
+
+  const handleMobile=()=>{
+    dispatch(setIsMobile(true));
+  }
   return (
     <>
       <Box sx={{flexGrow:1 }}>
@@ -21,7 +29,12 @@ const Header = () => {
             </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center',justifyContent:"center" }}>
               <Tooltip title="Search">
-                <SearchIcon sx={{marginRight:"40px"}} onClick={searchDialog}/>
+                <SearchIcon sx={{marginRight:"20px"}} onClick={searchDialog}/>
+              </Tooltip>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center',justifyContent:"center",  display: { xs: "block", sm: "none" }, }}>
+              <Tooltip title="Chats">
+                <MenuIcon sx={{marginRight:'20px'}} onClick={handleMobile}/>
               </Tooltip>
           </Box>
           </Box>
