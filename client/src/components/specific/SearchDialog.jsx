@@ -1,26 +1,65 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { Dialog, DialogTitle, List, Stack, TextField } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
-import React, { useState } from 'react';
-import { sampleSearchs } from '../../constants/sampleChats';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { CustomMutationHook } from '../../hooks/CustomMutationHook';
+import { useLazySearchUserQuery, useSendFriendRequestMutation } from '../../redux/api/api';
+import { setIsSearch } from '../../redux/reducers/others.';
 import UserItem from '../shared/UserItem';
 
 const SearchDialog = () => {
 
-  let isSendingRequest=false;
+  const [searchValue,setSearchValue]=useState("");
 
-  const [users,setUsers]=useState(sampleSearchs);
+  const dispatch=useDispatch();
+  const {isSearch}=useSelector(state=>state.misc);
+  const [searchUser]=useLazySearchUserQuery();
 
-  const addFriendHandler=(id)=>{
-    console.log("added friend",id);
+  const [sendFriendRequest,isLoading]=CustomMutationHook(useSendFriendRequestMutation);
+
+  useEffect(()=>{
+
+    const timeOut=setTimeout(async()=>{
+      
+      try{
+          const {data}=await searchUser(searchValue);
+          setUsers(data.users)  
+          console.log(data)
+        }
+        catch(error){
+          console.log(error)
+        }
+
+    },1000)
+
+    return ()=>{
+      clearTimeout(timeOut);
+    }
+
+  },[searchValue])
+
+  const [users,setUsers]=useState([]);
+
+  const addFriendHandler=async (id)=>{
+    await sendFriendRequest("Sending Friend Request",{userId:id})
   }
   
+  const handleSearchDialogClose=()=>{
+    dispatch(setIsSearch(false));
+  }
+
+  const searchHandler=(e)=>{
+    const {value}=e.target;
+    setSearchValue(value);
+  }
+
   return (
     <>
-      <Dialog open>
+      <Dialog open={isSearch} onClose={handleSearchDialogClose}>
         <Stack padding={{xs:"1rem",sm:"3rem"}}>
           <DialogTitle textAlign="center">Search people</DialogTitle>
-          <TextField  label="" variant="outlined" 
+          <TextField  label="" variant="outlined" value={searchValue} onChange={searchHandler}
           InputProps={{
               startAdornment:(
                 <InputAdornment position="start">
@@ -31,8 +70,7 @@ const SearchDialog = () => {
 
           <List>
             {users.map((u)=>(
-                // console.log("user aya?",u)
-              <UserItem users={u} handler={addFriendHandler} handlerLoading={isSendingRequest} key={u._id}/>
+              <UserItem users={u} handler={addFriendHandler} handlerLoading={isLoading} key={u._id}/>
             ))}
           </List>
           
