@@ -7,11 +7,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Backdrop } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { Suspense, lazy, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { royalBlue } from '../../constants/colors';
-import { NavigationBars } from '../shared/NavigationBars';
-import { useDispatch, useSelector } from 'react-redux';
 import { setIsNotification } from '../../redux/reducers/others.';
+import { NavigationBars } from '../shared/NavigationBars';
 
 const SearchDialog = lazy(()=>import("../specific/SearchDialog"));
 const NotificationDialog=lazy(()=>import("../specific/NotificationDialog"));
