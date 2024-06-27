@@ -7,6 +7,7 @@ import Loader from './components/layout/Loader.jsx';
 import ProtectedRoute from './components/styles/auth/ProtectedRoute.jsx';
 import { server } from './constants/configServer.js';
 import { userExist, userNotExist } from './redux/reducers/auth.js';
+import { SocketProvider } from './socket.jsx';
 
 const Home= lazy(()=>import("./pages/Home.jsx"));
 const Login=lazy(()=>import("./pages/Login.jsx"))
@@ -18,7 +19,7 @@ const Profile=lazy(()=>import("./pages/Profile.jsx"))
 
 const App = () => {
   
-  const {user,loader}=useSelector(state=>state.auth);
+  const {user,loader}=useSelector((state)=>state.auth);
 
   const dispatch=useDispatch();
 
@@ -34,7 +35,9 @@ const App = () => {
     <Suspense fallback={<Loader/>}>
     <Routes> 
 
-      <Route element={<ProtectedRoute user={user}/>}>
+      <Route element={<SocketProvider>
+                          <ProtectedRoute user={user}/>
+                      </SocketProvider>}>
         <Route path="/" element={<Home/>}/>
         <Route path="/chat/:chatId" element={<Chat/>}/>
         <Route path="/group" element={<Group/>}/>
