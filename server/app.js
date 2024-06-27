@@ -1,4 +1,6 @@
+import { v2 as cloudinary } from "cloudinary";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import { createServer } from 'http';
@@ -6,20 +8,22 @@ import { Server } from "socket.io";
 import { errorMiddleware } from "./middlewares/error.js";
 import { Message } from "./models/message.js";
 import { connectDB } from "./utils/database.js";
-import cors from "cors"
-import {v2 as cloudinary} from "cloudinary"
-
-import { randomUUID } from "crypto";
+import { v4 as uuid } from "uuid";
+import { corsOption } from "./constants/config.js";
 import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
 import { usersSockets } from "./lib/helper.js";
+import { socketAuthenticator } from "./middlewares/auth.js";
 import chatRoute from "./routes/chat.js";
 import userRoute from "./routes/user.js";
 
 
-
 const app=express();
 const server=createServer(app);
-const io=new Server(server,{});
+const io=new Server(server,{
+    cors:corsOption
+});
+
+app.set("io", io);  
 
 dotenv.config({
     path:"./.env"
@@ -37,18 +41,10 @@ cloudinary.config({
     api_secret:process.env.CLOUDINARY_API_SECRET
 })
 
+
 app.use(express.json());
 app.use(cookieParser());
-
-app.use(cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-      process.env.CLIENT_URL,
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  }))
+app.use(cors(corsOption))
 
 
 app.use("/api/v1/user",userRoute);
@@ -58,24 +54,23 @@ app.get("/",(req,res)=>{
     res.send("Welcome to Home")
 })
 
-const user={
-    _id:"sdfsd",
-    name:"sdfaf"
-}
+
+io.use((socket,next)=>{
+    cookieParser()(socket.request,socket.request.res,
+        async(err) => await socketAuthenticator(err,socket,next)
+    )
+})
 
 io.on("connection",(socket)=>{
+    const user=socket.user
+    usersSocketIds.set(user._id.toString(),socket.id)
     
-
-    usersSocketIds.set(user._id.toString(),socket.id.toString())
-    
-    console.log(usersSocketIds)
-    
-    socket.on(NEW_MESSAGE,async ({members,message,chatId})=>{
-       
-
+    socket.on(NEW_MESSAGE,async ({chatId,members,message})=>{
+        if (!message || !message.trim()) return; 
+        
         const messageForRealTime={
             content:message,
-            _id:randomUUID(),
+            _id:uuid(),
             sender:{
                 _id:user._id,
                 name:user.name
@@ -83,23 +78,28 @@ io.on("connection",(socket)=>{
             chat:chatId,
             createdAt:new Date().toISOString()
         }
-        console.log("new message",messageForRealTime)
 
         const messageForDB={
             content:message,
             sender:user._id,
             chat:chatId
         }
-        
         const membersSocket=usersSockets(members)
 
-        io.to(membersSocket).emit(NEW_MESSAGE,{
+        io.to(membersSocket).emit(NEW_MESSAGE, {
             chatId,
-            message:messageForRealTime
-        })
+            message: messageForRealTime,
+          });
+
         io.to(membersSocket).emit(NEW_MESSAGE_ALERT,{chatId})
 
-        await Message.create(messageForDB)
+        try{
+            await Message.create(messageForDB)
+        }
+        catch(error)
+        {
+            throw new Error(error);
+        }
 
     })
 
@@ -117,3 +117,4 @@ server.listen(port,()=>
     })
 
 export { usersSocketIds };
+
