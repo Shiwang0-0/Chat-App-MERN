@@ -1,11 +1,11 @@
-import { Typography, Box } from '@mui/material';
-import React, {memo} from 'react'
-import moment from "moment"
+import { Box, Typography } from '@mui/material';
+import moment from "moment";
+import React, { memo } from 'react';
 import { fileFormat } from '../../lib/fileFormat';
-import RenderAttachment from "./RenderAttachment"
+import RenderAttachment from "./RenderAttachment";
 
 
-const MessageComponent = ({message,user}) => {
+const MessageComponent = memo(({user,message}) => {
     const {attachments,content,sender,createdAt}=message; 
     const sameSender=sender?._id==user?._id;
     const timeAgo=moment(createdAt).fromNow();
@@ -15,12 +15,11 @@ const MessageComponent = ({message,user}) => {
             alignSelf:sameSender?'flex-end':'flex-start'
         }}>
 
-        {!sameSender && <Typography color="black">{sender.name}</Typography>}
+        {!sameSender && <Typography color="black">{sender?.name}</Typography>}
 
         {content && <Typography color="orange">{content}</Typography>}
-
         {
-            attachments.length>0 && attachments.map((i,index)=>{
+            attachments && attachments.map((i,index)=>{
                 const url=i.url;
                 const file=fileFormat(url);
                 return (
@@ -33,12 +32,11 @@ const MessageComponent = ({message,user}) => {
                         </a>
                     </Box>
                 )   
-            })
+            })  
         }
-
-        {<Typography>{timeAgo}</Typography>}
+        <Typography>{timeAgo}</Typography>
         </div>
   )
-}
+})
 
-export default memo(MessageComponent)
+export default MessageComponent
