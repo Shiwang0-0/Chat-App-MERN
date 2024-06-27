@@ -1,14 +1,14 @@
 import { usersSocketIds } from "../app.js";
 
 export const getOtherMember=(members,userId)=>{
-    return members.find((members)=>members._id.toString()!==userId.toString());
+    return members.find((members)=>members._id.toString()!==userId._id.toString());
 }
 
-export const usersSockets=(members=[])=>{
-    const sockets=members.map((i)=>usersSocketIds.get(i._id.toString()))
-
+export const usersSockets = (members=[]) => {
+    const sockets = members.map((user) => usersSocketIds.get(user.toString()));
     return sockets;
 }
+
 
 export const toBase64 = (file) => {
     if (file && file.buffer) {
