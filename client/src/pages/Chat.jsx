@@ -1,17 +1,17 @@
+import { useInfiniteScrollTop } from "6pp";
 import AttachmentIcon from '@mui/icons-material/Attachment';
 import SendIcon from '@mui/icons-material/Send';
-import { Skeleton, Stack,Button, IconButton } from '@mui/material';
-import React, { useCallback, useEffect, useState, memo, useRef } from 'react';
-import { getSocket } from '../socket';
+import { IconButton, Skeleton, Stack } from '@mui/material';
+import React, { memo, useCallback, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import AppLayout from '../components/layout/AppLayout';
 import MessageComponent from '../components/shared/MessageComponent';
 import { InputBox } from '../components/styles/StyledComponent';
 import { NEW_MESSAGE } from '../constants/events';
-import { useChatDetailsQuery, useGetMessageQuery } from '../redux/api/api';
-import { useSocketEvents } from '../hooks/SocketEvents';
-import { useSelector } from 'react-redux';
 import { useErrors } from '../hooks/ErrorHook';
-import { useInfiniteScrollTop } from "6pp"
+import { useSocketEvents } from '../hooks/SocketEvents';
+import { useChatDetailsQuery, useGetMessageQuery } from '../redux/api/api';
+import { getSocket } from '../socket';
 
 
 
@@ -46,7 +46,6 @@ const Chat = memo(({chatId}) => {
   ]
 
   const messageOnChange=(e)=>{
-    console.log("typing...",e.target.value)
     setMessage(e.target.value)
   }
 
@@ -78,7 +77,6 @@ const Chat = memo(({chatId}) => {
 
   const allMessages=[...oldMessages,...messages]
 
-  console.log(allMessages)
 
   return (
     chatDetails.isLoading?<Skeleton/>
