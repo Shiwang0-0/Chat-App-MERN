@@ -15,13 +15,12 @@ import NavigationPanel from './NavigationPanel'
 const AppLayout = ()=>(WrapperComponent) =>{
 
   return(props)=>{ 
-
+    
     const dispatch=useDispatch();
     const location=useLocation();
     const isProfilePage=location.pathname==='/profile'
     const params=useParams();
     const chatId=params.chatId;
-
     const {isMobile}=useSelector((state)=>state.misc)
 
     const {isLoading,isError,data,error,refetch}=useMyChatsQuery("");
@@ -45,10 +44,9 @@ const AppLayout = ()=>(WrapperComponent) =>{
           {isLoading?<Skeleton/>
             :
           <Drawer open={isMobile} onClose={handleMobileClose}>
-            <ChatList w="70vw" chats={data.chats} chatId={chatId} handleDeleteChat={handleDeleteChat}/>
+            <ChatList w="70vw" chats={data?.chats} chatId={chatId} handleDeleteChat={handleDeleteChat}/>
           </Drawer>
           }
-          {console.log(isMobile)}
           <Grid container height={"calc(100vh - 4rem)"}>
             <Grid item xs={3}
              sx={{
@@ -59,7 +57,7 @@ const AppLayout = ()=>(WrapperComponent) =>{
             <Grid item xs={6} style={{ height: '100%' }}
             sx={{display:{xs:"block"} ,backgroundColor:"blue"}} 
             >
-              <WrapperComponent {...props}/>
+              <WrapperComponent {...props} chatId={chatId} />
             </Grid>
             <Grid item xs={3} 
             sx={{display:{xs:"none",sm:"block"} }} 
@@ -68,7 +66,8 @@ const AppLayout = ()=>(WrapperComponent) =>{
                (isLoading?
                 <Skeleton variant="rectangular" height="3rem"/>
                 :
-                <ChatList chats={data.chats} chatId={chatId} handleDeleteChat={handleDeleteChat}/>)
+                <ChatList chats={data?.chats} chatId={chatId} handleDeleteChat={handleDeleteChat}/>  
+               )
                }
             </Grid>
           </Grid>
