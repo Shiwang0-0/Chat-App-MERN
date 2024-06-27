@@ -1,5 +1,5 @@
-import mongoose,{ Schema,model, Types} from "mongoose";
-import {hash} from "bcrypt"
+import { hash } from "bcrypt";
+import mongoose, { Schema, model } from "mongoose";
 
 const schema =new Schema({
     name:{
@@ -10,6 +10,9 @@ const schema =new Schema({
         type:String,
         required:true,
         unique:true
+    },
+    bio:{
+        type:String
     },
     password:{
         type:String,
