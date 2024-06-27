@@ -22,12 +22,11 @@ const ChatList = (
         {
           
           chats?.map((data,index)=>{
-
             const {groupAvatar,_id,name,groupChat,members}=data;
             const newMessageAlert=newMessagesAlert.find(
                 ({chatId})=>chatId===_id
             )
-            const isOnline=members?.some((member)=>onlineUser.includes(_id));
+            const isOnline=members?.some((member)=>onlineUser.includes(member));
             return (
             <ChatItem index={index} newMessageAlert={newMessageAlert} isOnline={isOnline} avatar={groupAvatar} name={name} _id={_id} key={_id} groupChat={groupChat} sameSender={chatId===_id} handleDeleteChat={handleDeleteChat}/>
           ) 
