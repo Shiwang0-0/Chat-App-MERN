@@ -5,9 +5,9 @@ import { customError, tryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
 import { Request } from "../models/request.js";
 import { User } from "../models/user.js";
+import { uploadFilesToCloudinary } from "../utils/cloudinary.js";
 import { emitEvent } from "../utils/eventEmitter.js";
 import { cookieOption, sendtoken } from "../utils/token.js";
-import { uploadFilesToCloudinary } from "../utils/cloudinary.js";
 
 const newUser=tryCatch(async(req,res)=>{
     const { name, username, password} = req.body;
@@ -18,7 +18,7 @@ const newUser=tryCatch(async(req,res)=>{
             const uploadedFile=await uploadFilesToCloudinary([file])
              avatar={
                 public_id:uploadedFile[0].public_id,
-                url:uploadedFile[0].secure_url
+                url:uploadedFile[0].url
             }
         }
     const user= await User.create({name,username,password,avatar});
@@ -61,7 +61,7 @@ const myProfile=async(req,res,next)=>{
 
 
 const logout=async(req,res)=>{
-
+    
     return res.status(200).cookie("val-token","",{...cookieOption,maxAge:0}).json({
         success:true,
         message:"Logout Successful"
@@ -81,11 +81,9 @@ const searchUser=tryCatch(async(req,res,next)=>{
         name:{$regex:name, $options:"i"}
     })
 
-    const users=allOtherUsersFromMyChat.map((_id,name,avatar)=>({
-        _id,
-        name,avatar:avatar.url
+    const users=allOtherUsersFromMyChat.map(({_id,name,avatar})=>({
+        _id,name,avatar:avatar.url
     }))
-
     return res.status(200).json({
         success:true,
         users
@@ -102,8 +100,8 @@ const sendFriendRequest=tryCatch(async(req,res,next)=>{
                 {sender:userId,receiver:req.user._id},
         ]})
     
-        if(isRequestAlreadySent)
-            next(new customError("Request already sent",400))
+    if(isRequestAlreadySent)
+        next(new customError("Request already sent",400))
 
     await Request.create({
         sender:req.user._id,
@@ -126,7 +124,7 @@ const acceptFriendRequest=tryCatch(async(req,res,next)=>{
         next(new customError("Request not found",400))
 
     if(request.receiver._id.toString() != req.user._id.toString())
-        next(new customError("You are not authorized to accepct the request",401));
+        next(new customError("You are not authorized to accept the request",401));
     if(!accept)
         {
             await request.deleteOne();
@@ -138,11 +136,10 @@ const acceptFriendRequest=tryCatch(async(req,res,next)=>{
 
     const members=[request.sender._id, request.receiver._id]
 
-    await Promise.all[
+    await Promise.all([
         Chat.create({members,name:`${request.sender.name}-${request.receiver.name}`}), 
         request.deleteOne()
-    ]
-
+    ])
     emitEvent(req,REFETCH_CHATS,members);
 
     return res.status(200).json({
@@ -213,3 +210,4 @@ const availableFriends=tryCatch(async(req,res,next)=>{
 
 
 export { acceptFriendRequest, availableFriends, login, logout, myProfile, newUser, notifications, searchUser, sendFriendRequest };
+
