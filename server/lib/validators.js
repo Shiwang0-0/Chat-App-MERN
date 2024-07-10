@@ -31,7 +31,7 @@ const createGroupValidator=()=>[
 
 const addMemberValidator=()=>[
     body("chatId","Please enter chatId").notEmpty(),
-    body("newMembers").notEmpty().withMessage("Please add some members").isArray({min:1}).withMessage("Please add some members")
+    body("members").notEmpty().withMessage("Please add some members").isArray({min:1}).withMessage("Please add some members")
 ]
 
 const chatIdInParamValidator=()=>[
@@ -40,7 +40,7 @@ const chatIdInParamValidator=()=>[
 
 const removeMemberValidator=()=>[
     body("chatId","Please enter chatId").notEmpty(),
-    body("removeMembers").notEmpty().withMessage("Please remove some members").isArray({min:1}).withMessage("Please remove some members")
+    body("userId","Please enter userId").notEmpty(),
 ]
 
 const sendAttachmentValidator=()=>[

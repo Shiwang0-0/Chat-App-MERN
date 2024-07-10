@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
 const cookieOption={
     maxAge:15*24*60*60*1000,
@@ -13,8 +13,9 @@ const sendtoken=(res,user,code,message)=>{
 
     return res.status(code).cookie("val-token",token,cookieOption).json({
         success:true,
+        user,
         message,
     })
 }
 
-export {sendtoken,cookieOption}
+export { cookieOption, sendtoken };
