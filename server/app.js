@@ -5,16 +5,16 @@ import dotenv from "dotenv";
 import express from "express";
 import { createServer } from 'http';
 import { Server } from "socket.io";
-import { errorMiddleware } from "./middlewares/error.js";
-import { Message } from "./models/message.js";
-import { connectDB } from "./utils/database.js";
 import { v4 as uuid } from "uuid";
 import { corsOption } from "./constants/config.js";
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT, START_TYPING, STOP_TYPING } from "./constants/events.js";
 import { usersSockets } from "./lib/helper.js";
 import { socketAuthenticator } from "./middlewares/auth.js";
+import { errorMiddleware } from "./middlewares/error.js";
+import { Message } from "./models/message.js";
 import chatRoute from "./routes/chat.js";
 import userRoute from "./routes/user.js";
+import { connectDB } from "./utils/database.js";
 
 
 const app=express();
@@ -65,9 +65,10 @@ io.on("connection",(socket)=>{
     const user=socket.user
     usersSocketIds.set(user._id.toString(),socket.id)
     
+    
     socket.on(NEW_MESSAGE,async ({chatId,members,message})=>{
         if (!message || !message.trim()) return; 
-        
+
         const messageForRealTime={
             content:message,
             _id:uuid(),
@@ -101,6 +102,22 @@ io.on("connection",(socket)=>{
             throw new Error(error);
         }
 
+    })
+
+    socket.on(START_TYPING,({chatId,members})=>{
+        const membersSocket=usersSockets(members)
+
+        socket.to(membersSocket).emit(START_TYPING,{
+            chatId
+        })
+    })
+
+    socket.on(STOP_TYPING,({chatId,members})=>{
+        const membersSocket=usersSockets(members)
+
+        socket.to(membersSocket).emit(STOP_TYPING,{
+            chatId
+        })
     })
 
     socket.on("disconnect",()=>{
