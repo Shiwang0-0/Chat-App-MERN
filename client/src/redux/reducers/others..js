@@ -50,4 +50,4 @@ const miscSlice=createSlice({
 })
 
 export default miscSlice;
-export const {setIsNewGroup,setIsAddMember,setIsNotification,setIsMobile,setIsSearch,setIsFileMenu,setIsDeleteMenu,setIsuploadingLoader,setSelectedDeleteChat}=miscSlice.actions
+export const {setIsNewGroup,setIsAddMember,setIsNotification,setIsMobile,setIsSearch,setIsFileMenu,setIsDeleteMenu,setIsUploadingLoader,setSelectedDeleteChat}=miscSlice.actions
