@@ -4,14 +4,16 @@ import toast from "react-hot-toast";
 
 const useErrors=(errors=[])=>{
 
-    useEffect((error,isError,fallback)=>{
-        if(isError)
-        {
-            if(fallback)
-                fallback();
-            else
-                toast.error(error.message || "Somehing went wrong")
-        }
+    useEffect(()=>{
+        errors.forEach(({isError,error,fallback})=>{
+            if(isError)
+                {
+                    if(fallback)
+                        fallback();
+                    else
+                        toast.error(error?.data?.message || "Somehing went wrong")
+                }
+        })
     },[errors])
 }
 
