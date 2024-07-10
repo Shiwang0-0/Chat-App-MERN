@@ -1,11 +1,15 @@
 import React from 'react'
 import AppLayout from '../components/layout/AppLayout'
-import { Stack,Box, Typography } from '@mui/material'
+import { Stack, Box, Typography } from '@mui/material'
+import { bgColorHome } from '../constants/colors'
 const Home = () => {
   return (
-    <Box>
-      <Stack height="100%" sx={{backgroundColor:"red"}}/>
-      <Typography sx={{display:"flex ", justifyContent:"center",mt:"4rem",fontSize:"3rem"}}>Welcome to Chat-APP</Typography>
+    <Box
+      height={"100%"}
+    >
+      <Typography p={"2rem"} variant="h5" textAlign={"center"}>
+        Welcome to Chat application <br/> <br/> <br/> Select a friend to chat
+      </Typography>
     </Box>
   )
 }

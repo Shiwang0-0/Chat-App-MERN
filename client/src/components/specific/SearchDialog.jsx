@@ -25,7 +25,6 @@ const SearchDialog = () => {
       try{
           const {data}=await searchUser(searchValue);
           setUsers(data.users)  
-          console.log(data)
         }
         catch(error){
           console.log(error)
@@ -57,8 +56,8 @@ const SearchDialog = () => {
   return (
     <>
       <Dialog open={isSearch} onClose={handleSearchDialogClose}>
-        <Stack padding={{xs:"1rem",sm:"3rem"}}>
-          <DialogTitle textAlign="center">Search people</DialogTitle>
+        <Stack padding={{xs:"1rem",sm:"3rem"}} sx={{overflowX: "hidden", overflowY: "auto", '&::-webkit-scrollbar':{ width: 0, height: 0 }}}>
+          <DialogTitle textAlign="center">Add Friend to Chat With</DialogTitle>
           <TextField  label="" variant="outlined" value={searchValue} onChange={searchHandler}
           InputProps={{
               startAdornment:(
@@ -68,7 +67,7 @@ const SearchDialog = () => {
               )
             }}/>
 
-          <List>
+          <List >
             {users.map((u)=>(
               <UserItem users={u} handler={addFriendHandler} handlerLoading={isLoading} key={u._id}/>
             ))}
