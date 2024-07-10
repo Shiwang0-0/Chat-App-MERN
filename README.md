@@ -28,10 +28,10 @@ The Project is made with the use of MERN Stack.
 # Frontend
 The Frontend of the project is build using React-JS and the styling is done using Material UI (MUI). It implements the use of features provided by ReactJS including React Hooks, React Routing.
 
-## Socket Connection
+#### Socket Connection
 A real time interface between the users using the application is made using Socket Connection. The Project made use of Socket.io for the Socket Connection.
 
-## State Management
+#### State Management
 The Variables state across the application is one main task of a chat application. Here, In this project It is implemented using Redux Toolkit which ensures proper State Management of needed variables across the application.
 
 
@@ -43,5 +43,5 @@ The Project uses Cloudinary as a cloud storage to store User’s Avatar, and att
 
 
 
-## Authentication And Authorization
+#### Authentication And Authorization
 User’s Authentication and Authorization across the application is done using Json Web Token and Express Validator, It ensures that Unauthenticated user cannot access the data from the Database and only Authorized user gets his/her respective data.
