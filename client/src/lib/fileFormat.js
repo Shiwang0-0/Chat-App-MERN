@@ -13,6 +13,6 @@ const fileFormat=(url="")=>{
         return "file"
 }
 
-export const transformImage=(url="")=>url
+const transformImage=(url=[])=>url[0];
 
-export {fileFormat}
+export { fileFormat, transformImage };
