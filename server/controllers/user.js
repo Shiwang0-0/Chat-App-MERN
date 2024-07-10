@@ -1,5 +1,5 @@
 import { compare } from "bcrypt";
-import { REFETCH_CHATS } from "../constants/events.js";
+import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 import { customError, tryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
@@ -108,6 +108,8 @@ const sendFriendRequest=tryCatch(async(req,res,next)=>{
         receiver:userId
     })
 
+    emitEvent(req,NEW_REQUEST,[userId])
+
     return res.status(200).json({
         success:true,
         message:"Request sent successfully"
@@ -173,15 +175,15 @@ const notifications=tryCatch(async(req,res,next)=>{
 
 
 const availableFriends=tryCatch(async(req,res,next)=>{
-    const chatId=req.query._id;
-
+    const chatId=req.query.chatId;
     const chats=await Chat.find({
-        members:req.user._id,
+        members:req.user,
         groupChat:false
     }).populate("members", "name avatar")
 
-    const newFriends=chats.map(({members})=>{
-        const otherUsers=getOtherMember(members,req.user._id)
+
+    const friends=chats.map(({members})=>{
+        const otherUsers=getOtherMember(members,req.user)
         return {
             _id:otherUsers._id,
             name:otherUsers.name,
@@ -192,17 +194,17 @@ const availableFriends=tryCatch(async(req,res,next)=>{
     if(chatId)
         {
             const chat=await Chat.findById(chatId);
-            const availableFriends=friends.filter((i)=>!chat.members.includes(i._id))
+            const availFriends=friends.filter((i)=>!chat.members.includes(i._id))
             return res.status(200).json({
                 success:true,
-                availableFriends
+                friends:availFriends
             })
         }
     else
         {
             return res.status(200).json({
                 success:true,
-                newFriends
+                friends
             }) 
         }
 
