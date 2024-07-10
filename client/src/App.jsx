@@ -3,7 +3,7 @@ import React, { Suspense, lazy, useEffect } from 'react';
 import { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Loader from './components/layout/Loader.jsx';
+import { Loader } from './components/layout/Loader.jsx';
 import ProtectedRoute from './components/styles/auth/ProtectedRoute.jsx';
 import { server } from './constants/configServer.js';
 import { userExist, userNotExist } from './redux/reducers/auth.js';
