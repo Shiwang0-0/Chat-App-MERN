@@ -5,47 +5,48 @@ import React, { Suspense, lazy } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { royalBlue } from '../../constants/colors';
 import { setIsMobile, setIsSearch } from '../../redux/reducers/others.';
-const SearchDialog = lazy(()=>import("../specific/SearchDialog"));
+import { bgcolorHeader } from '../../constants/colors';
+const SearchDialog = lazy(() => import("../specific/SearchDialog"));
 
 const Header = () => {
-  const dispatch=useDispatch();
-  const {isSearch}=useSelector(state=>state.misc)
 
-  const searchDialog=()=>{
-    console.log("search");
-    dispatch(setIsSearch(true));
-}
+  const dispatch = useDispatch();
 
-  const handleMobile=()=>{
-    dispatch(setIsMobile(true));
-  }
+  const { isSearch, isNotification } = useSelector((state) => state.misc)
+
+  const searchDialog = () => dispatch(setIsSearch(true));
+  
+
+  const handleMobile = () => dispatch(setIsMobile(true));
+
+
   return (
     <>
-      <Box sx={{flexGrow:1 }}>
-        <AppBar position='static' sx={{ bgcolor: royalBlue, height: '3rem' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center',height:"100%"}}>
-            <Typography sx={{ textAlign: 'center', flex: 1 }}>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position='static'  sx={{ bgcolor: bgcolorHeader, height: '3rem', width:"95%", borderRadius:"0px 0px 15px 15px" , marginInline:"auto"}}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: "100%", }} >
+            <Typography sx={{ textAlign: 'center', flex: 1, fontWeight:700}}>
               Chatting Application
             </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center',justifyContent:"center" }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: "center" }}>
               <Tooltip title="Search">
-                <SearchIcon sx={{marginRight:"20px"}} onClick={searchDialog}/>
+                <SearchIcon sx={{ marginRight: "20px" }} onClick={searchDialog} />
               </Tooltip>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center',justifyContent:"center",  display: { xs: "block", sm: "none" }, }}>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: "center", display: { xs: "block", sm: "none" }, }}>
               <Tooltip title="Chats">
-                <MenuIcon sx={{marginRight:'20px'}} onClick={handleMobile}/>
+                <MenuIcon sx={{ marginRight: '20px' }} onClick={handleMobile} />
               </Tooltip>
-          </Box>
+            </Box>
           </Box>
         </AppBar>
       </Box>
 
-    {isSearch && (
-        <Suspense fallback={<Backdrop open/>}>  
-            <SearchDialog/>
+      {isSearch && (
+        <Suspense fallback={<Backdrop open />}>
+          <SearchDialog />
         </Suspense>
-    )}
+      )}
 
     </>
   )

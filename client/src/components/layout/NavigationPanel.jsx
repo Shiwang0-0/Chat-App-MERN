@@ -10,81 +10,76 @@ import React, { Suspense, lazy, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { royalBlue } from '../../constants/colors';
-import { setIsNotification } from '../../redux/reducers/others.';
+import { resetNotificationCount } from '../../redux/reducers/chat';
+import { setIsNewGroup, setIsNotification, setIsSearch } from '../../redux/reducers/others.';
 import { NavigationBars } from '../shared/NavigationBars';
+import { bgColorPanel } from '../../constants/colors';
 
-const SearchDialog = lazy(()=>import("../specific/SearchDialog"));
-const NotificationDialog=lazy(()=>import("../specific/NotificationDialog"));
-const NewGroupDialog=lazy(()=>import("../specific/NewGroupDialog"))
+const SearchDialog = lazy(() => import("../specific/SearchDialog"));
+const NotificationDialog = lazy(() => import("../specific/NotificationDialog"));
+const NewGroupDialog = lazy(() => import("../specific/NewGroupDialog"))
 
 const NavigationPanel = () => {
 
-    const navigate=useNavigate();
+    const navigate = useNavigate();
 
-    const [isMobile,setIsMobile]=useState(false);
-    const [isSearch,setIsSearch]=useState(false);
-    const [isNewGroup,setIsNewGroup]=useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
-    const dispatch=useDispatch();
-    const {isNotification}=useSelector(state=>state.misc)
+    const dispatch = useDispatch();
+    const { isNotification, isNewGroup, isSearch } = useSelector((state) => state.misc)
 
-    const handleMobile=()=>{
-        setIsMobile((prev)=>!prev);
+    const handleMobile = () => {
+        setIsMobile((prev) => !prev);
     }
 
-    const navigateToHome=()=>{
-        console.log("home");
-        navigate("/");
-    }
-    const searchDialog=()=>{
-        console.log("search");
-        setIsSearch((prev)=>!prev);
-    }
-    const openNotifications=()=>{
-        console.log("notification")
+    const navigateToHome = () => navigate("/");
+
+    const searchDialog = () => dispatch(setIsSearch(true))
+
+    const openNotifications = () => {
         dispatch(setIsNotification(true))
-    }
-    const navigateToGroups=()=>{    
-        navigate("/group")
-    }
-    const createGroup=()=>{
-        console.log("create group");
-        setIsNewGroup((prev)=>!prev);
-    }
-    const navigateToProfile=()=>{    
-        navigate("/profile")
+        dispatch(resetNotificationCount())
     }
 
-  return (
-    <>
-    <Box sx={{ bgcolor: royalBlue, height: '90vh', display:"flex", flexDirection:"column", alignItems:"center", mt:"10px",ml:"5px",mr:"5px", overflow:"none"}} >
+    const navigateToGroups = () => navigate("/group")
 
-        <NavigationBars title={"Home"} icon={<HomeIcon/>} onClickfunc={navigateToHome}/>
-        <NavigationBars title={"Search"} icon={<SearchIcon/>} onClickfunc={searchDialog}/>
-        <NavigationBars title={"Notifications"} icon={<NotificationsNoneIcon/>} onClickfunc={openNotifications}/>
-        <NavigationBars title={"Groups"} icon={<GroupsIcon/>} onClickfunc={navigateToGroups}/>
-        <NavigationBars title={"Create Group"} icon={<GroupAddIcon/>} onClickfunc={createGroup}/>
-        <NavigationBars title={"Profile"} icon={<AccountCircleIcon/>} onClickfunc={navigateToProfile}/>
-    </Box>
 
-    {isSearch && (
-        <Suspense fallback={<Backdrop open/>}>
-            <SearchDialog/>
-        </Suspense>
-    )}
-    {isNotification && (
-        <Suspense fallback={<Backdrop open/>}>
-            <NotificationDialog/>
-        </Suspense>
-    )}
-    {isNewGroup && (
-        <Suspense fallback={<Backdrop open/>}>
-            <NewGroupDialog/>
-        </Suspense>
-    )}
+    const createGroup = () => dispatch(setIsNewGroup(true))
 
-    </>
-  )
+
+    const navigateToProfile = () => navigate("/profile")
+
+
+    return (
+        <>
+            <Box sx={{ bgcolor:bgColorPanel, height: '90vh', display: "flex", flexDirection: "column", alignItems: "center", mt: "10px", ml: "5px", mr: "5px", overflow: "none",borderRadius:"20px 20px 20px 20px" }} >
+
+                <NavigationBars title={"Home"} icon={<HomeIcon />} onClickfunc={navigateToHome} />
+                <NavigationBars title={"Search"} icon={<SearchIcon />} onClickfunc={searchDialog} />
+                <NavigationBars title={"Notifications"} icon={<NotificationsNoneIcon />} onClickfunc={openNotifications} />
+                <NavigationBars title={"Groups"} icon={<GroupsIcon />} onClickfunc={navigateToGroups} />
+                <NavigationBars title={"Create Group"} icon={<GroupAddIcon />} onClickfunc={createGroup} />
+                <NavigationBars title={"Profile"} icon={<AccountCircleIcon />} onClickfunc={navigateToProfile} />
+            </Box>
+
+            {isSearch && (
+                <Suspense fallback={<Backdrop open />}>
+                    <SearchDialog />
+                </Suspense>
+            )}
+            {isNotification && (
+                <Suspense fallback={<Backdrop open />}>
+                    <NotificationDialog />
+                </Suspense>
+            )}
+            {isNewGroup && (
+                <Suspense fallback={<Backdrop open />}>
+                    <NewGroupDialog />
+                </Suspense>
+            )}
+
+        </>
+    )
 }
 
 

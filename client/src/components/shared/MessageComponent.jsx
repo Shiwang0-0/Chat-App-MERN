@@ -3,6 +3,7 @@ import moment from "moment";
 import React, { memo } from 'react';
 import { fileFormat } from '../../lib/fileFormat';
 import RenderAttachment from "./RenderAttachment";
+import { senderColor,contentColor, timeColor } from '../../constants/colors';
 
 
 const MessageComponent = memo(({user,message}) => {
@@ -12,12 +13,18 @@ const MessageComponent = memo(({user,message}) => {
     return (
         <div
         style={{
-            alignSelf:sameSender?'flex-end':'flex-start'
-        }}>
+            alignSelf: sameSender? 'flex-end' : 'flex-start',
+            maxWidth: '50%', 
+            flexBasis: '44%', 
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+            whiteSpace: "pre-wrap",
+            textAlign: sameSender? 'right' : 'left' 
+          }}>
 
-        {!sameSender && <Typography color="black">{sender?.name}</Typography>}
+        {!sameSender && <Typography color={senderColor}>{sender?.name}</Typography>}
 
-        {content && <Typography color="orange">{content}</Typography>}
+        {content && <Typography color={contentColor}>{content}</Typography>}
         {
             attachments && attachments.map((i,index)=>{
                 const url=i.url;
@@ -34,7 +41,7 @@ const MessageComponent = memo(({user,message}) => {
                 )   
             })  
         }
-        <Typography>{timeAgo}</Typography>
+        <Typography color={timeColor}>{timeAgo}</Typography>
         </div>
   )
 })

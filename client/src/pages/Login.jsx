@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { server } from '../constants/configServer';
 import { userExist } from '../redux/reducers/auth';
 import { validate } from '../utils/validation';
+import { bgColor } from '../constants/colors';
 
 const Login = () => {
 
@@ -20,6 +21,7 @@ const Login = () => {
   const [formErrors, setFormErrors] = useState({});
   const [selectedImg, setSelectedImg] = useState(null);
   const [fileError,setFileError]=useState(null);
+  const [isLoading,setIsLoading]=useState(false);
   
   const togglePage=()=>{
     setIsLogin(((prev)=>!prev));
@@ -60,7 +62,9 @@ const Login = () => {
 
 
   const handleSubmit = isLogin ? async (e) => {
+    setIsLoading(true)
     e.preventDefault();
+    const toastId=toast.loading("Logging In...");
     const errors = validate(formValues, isLogin);
     setFormErrors(errors);
     if (Object.keys(errors).length !== 0) {
@@ -80,14 +84,19 @@ const Login = () => {
           }
         }
       );
-      dispatch(userExist(data.success));
-      toast.success(data.message);
+      dispatch(userExist(data.user));
+      toast.success(data.message,{id:toastId});
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
     }
+    finally{
+      setIsLoading(false)
+    }
   } 
   : async (e) => {
+    setIsLoading(true)
     e.preventDefault();
+    const toastId=toast.loading("Signing Up...");
     const errors = validate(formValues, isLogin);
     setFormErrors(errors);
     if (Object.keys(errors).length !== 0) {
@@ -109,21 +118,24 @@ const Login = () => {
         },
       });
       dispatch(userExist(data.user));
-      toast.success(data.message);
+      toast.success(data.message,{id:toastId});
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+    finally{
+      setIsLoading(false)
     }
   };
   
 
 
   return (
-    <>
+    <div style={{ backgroundImage: bgColor}}>
     <Container max-width="xs" component={"main"} sx={{margin:"auto",display:"flex",justifyContent:"center",alignItems:"center",height:"100vh"}}>
       { isLogin ?
       <>
       <Paper elevation={7} sx={{height:"500px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center", padding:4, borderRadius:"1rem", width:"40%", mt:""}}>
-        <Typography variant="h4" color="initial">
+        <Typography variant="h4" color="initial" fontFamily="Montserrat">
           Login
         </Typography>
         <form style={{display:"flex",flexDirection:"column",alignItems:"center", width:"80%", margin:"30px 0 0 0"}} onSubmit={handleSubmit}>
@@ -137,7 +149,7 @@ const Login = () => {
             value={formValues.username}
             onChange={handleChange}
           />
-          {formErrors.username && <p style={{margin:"-5px",color:"red"}}>{formErrors.username}</p>}
+          {formErrors.username && <Typography style={{margin:"-5px",color:"red"}}>{formErrors.username}</Typography>}
           <TextField
             margin='normal'
             required
@@ -148,16 +160,16 @@ const Login = () => {
             value={formValues.password}
             onChange={handleChange}
           />
-          {formErrors.password && <p style={{margin:"-5px",color:"red"}}>{formErrors.password}</p>}
+          {formErrors.password && <Typography style={{margin:"-5px",color:"red"}}>{formErrors.password}</Typography>}
           <Box sx={{display:"flex",borderRadius:"1rem",alignItems:"center" ,justifyContent:"center", mt:"12px"}}>
-            <Button variant='contained' type="submit" >
+            <Button variant='contained' type="submit" disabled={isLoading}>
             Login
             </Button>
           </Box>
           <Typography sx={{mt:"60px",display:"flex",justifyContent:"center",alignItems:"center", textAlign:"center"}}>Don't have an account?</Typography>
           
           <Box sx={{display:"flex",borderRadius:"1rem",alignItems:"center" ,justifyContent:"center", mt:"8px"}}>
-            <Button type="button" onClick={togglePage} >
+            <Button type="button" onClick={togglePage} disabled={isLoading}>
             Register
             </Button>
           </Box>
@@ -168,16 +180,16 @@ const Login = () => {
       :
       <>
       <Paper elevation={7} sx={{height:"650px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center", padding:4, borderRadius:"1rem", width:"40%"}}>
-        <Typography variant="h4" color="initial" mt="-4px">
+        <Typography variant="h4" color="initial" mt="0px" fontFamily="Montserrat">
           Register
         </Typography>
 
         <Stack position={"relative"}>
         <Avatar src={selectedImg}
-          sx={{ width: "10rem", height: "10rem", mt: "7px", objectFit: "contained" }}
+          sx={{ width: "8rem", height: "8rem", mt: "4px", objectFit: "contained" }}
         />
         <input type="file" name="avatar" onChange={handleImgChange} style={{ display: 'none' }} accept="image/*"      id="avatar-input" />
-        {fileError && <p style={{ margin: "-5px", color: "red" }}>{fileError}</p>}
+        {fileError && <Typography style={{ margin: "-5px", color: "red" }}>{fileError}</Typography>}
         <label htmlFor='avatar-input'>
           <IconButton sx={{ position: "absolute", bottom: "0", right: "0" }} component="span">
             <CameraAltIcon />
@@ -196,7 +208,7 @@ const Login = () => {
             value={formValues.name || ''}
             onChange={handleChange}
           />
-          {formErrors.name && <p style={{margin:"-5px",color:"red"}}>{formErrors.name}</p>}
+          {formErrors.name && <Typography style={{margin:"-5px",color:"red"}}>{formErrors.name}</Typography>}
         <TextField 
             margin='normal'
             required
@@ -206,7 +218,7 @@ const Login = () => {
             value={formValues.username}
             onChange={handleChange}
           />
-          {formErrors.username && <p style={{margin:"-5px",color:"red"}}>{formErrors.username}</p>}
+          {formErrors.username && <Typography style={{margin:"-5px",color:"red"}}>{formErrors.username}</Typography>}
           <TextField
             margin='normal'
             required
@@ -217,7 +229,7 @@ const Login = () => {
             value={formValues.password}
             onChange={handleChange}
           />
-          {formErrors.password && <p style={{margin:"-5px",color:"red"}}>{formErrors.password}</p>}
+          {formErrors.password && <Typography style={{margin:"-5px",color:"red"}}>{formErrors.password}</Typography>}
           <TextField 
             margin='normal'
             required
@@ -228,16 +240,16 @@ const Login = () => {
             value={formValues.confirmpassword || ''}
             onChange={handleChange}
           />
-          {formErrors.confirmpassword && <p style={{margin:"-5px",color:"red"}}>{formErrors.confirmpassword}</p>}
+          {formErrors.confirmpassword && <Typography style={{margin:"-5px",color:"red"}}>{formErrors.confirmpassword}</Typography>}
           <Box sx={{display:"flex",borderRadius:"1rem",alignItems:"center" ,justifyContent:"center", mt:"12px"}}>
-            <Button variant='contained' type="submit"  >
+            <Button variant='contained' type="submit" disabled={isLoading}>
             Sign Up
             </Button>
           </Box>
           <Typography sx={{mt:"25px",display:"flex",justifyContent:"center",alignItems:"center", textAlign:"center"}}>Already a User?</Typography>
           
           <Box sx={{display:"flex",borderRadius:"1rem",alignItems:"center" ,justifyContent:"center", mt:"4px"}}>
-            <Button type="button" onClick={togglePage} >
+            <Button type="button" onClick={togglePage}  disabled={isLoading} >
             Login
             </Button>
           </Box>
@@ -247,7 +259,7 @@ const Login = () => {
       </>
       }
     </Container>
-    </>
+    </div>
   )
 }
 

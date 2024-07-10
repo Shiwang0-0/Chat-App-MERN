@@ -12,6 +12,7 @@ import { royalBlue } from '../../constants/colors';
 import { server } from '../../constants/configServer';
 import { userNotExist } from '../../redux/reducers/auth';
 import { NavigationBars } from '../shared/NavigationBars';
+import { bgColorPanel } from '../../constants/colors';
 const ProfileSetting = () => {
 
   const dispatch=useDispatch();
@@ -35,7 +36,7 @@ const ProfileSetting = () => {
 
   return (
     <div>
-      <Box sx={{ bgcolor: royalBlue, height: '90vh', display:"flex", flexDirection:"column", alignItems:"center", mt:"10px",ml:"5px",mr:"5px", overflow:"none"}} >
+      <Box sx={{ bgcolor:bgColorPanel, height: '90vh', display: "flex", flexDirection: "column", alignItems: "center", mt: "10px", ml: "5px", mr: "5px", overflow: "none",borderRadius:"20px 20px 20px 20px" }} >
       <NavigationBars title={"Edit Profile"} icon={<EditIcon/>} onClickfunc={navigateToHome}/>
       <NavigationBars title={"Add an Exisiting Account"} icon={<SupervisedUserCircleIcon/>} onClickfunc={navigateToHome}/>
       <NavigationBars title={"Deactivate account"} icon={<AutoDeleteIcon/>} onClickfunc={navigateToHome}/>
