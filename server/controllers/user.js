@@ -72,18 +72,20 @@ const logout=async(req,res)=>{
 const searchUser=tryCatch(async(req,res,next)=>{
     const { name="" }=req.query;
 
-    const myChats=await Chat.find({groupChat:false, members:req.user});
+    const myChats=await Chat.find({groupChat:false, members:req.user._id});
 
-    const allUserInMyChat=myChats.map((i)=>i.members).flat();
 
+    const allUserInMyChat = myChats.flatMap((chat) => chat.members);
+    
     const allOtherUsersFromMyChat=await User.find({
-        _id:{$nin:allUserInMyChat},
+        _id:{$nin:[...allUserInMyChat,req.user._id]},
         name:{$regex:name, $options:"i"}
     })
 
     const users=allOtherUsersFromMyChat.map(({_id,name,avatar})=>({
         _id,name,avatar:avatar.url
     }))
+    
     return res.status(200).json({
         success:true,
         users

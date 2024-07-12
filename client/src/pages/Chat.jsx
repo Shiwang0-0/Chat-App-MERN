@@ -148,7 +148,7 @@ const Chat = ({ chatId, user }) => {
   return (
     chatDetails.isLoading ? <Skeleton /> :
       <>
-        <Stack sx={{ height: "93%", width: "98%", margin: "auto", overflowX: "hidden", overflowY: "auto", '&::-webkit-scrollbar': { width: 0, height: 0 }, borderRadius: "10px 10px 10px 10px" }} ref={containerRef} spacing={1.6} >
+        <Stack sx={{ height: "93%", width: "98%", margin: "auto", overflowX: "hidden", overflowY: "auto", '&::-webkit-scrollbar': { width: 0, height: 0 }, borderRadius: "10px 10px 10px 10px" }} ref={containerRef} spacing={1} >
           {allMessages.map((message) => (
             <MessageComponent user={user} message={message} key={message._id} />
           ))
