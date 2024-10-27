@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import Redis from "ioredis";
 import { createServer } from 'http';
 import { Server } from "socket.io";
 import { v4 as uuid } from "uuid";
@@ -41,6 +42,18 @@ cloudinary.config({
     api_secret:process.env.CLOUDINARY_API_SECRET
 })
 
+const pub = new Redis({
+    host: process.env.REDIS_HOSTNAME,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD,
+});
+  
+const sub = new Redis({
+    host: process.env.REDIS_HOSTNAME,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD,
+});
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -54,6 +67,19 @@ app.get("/",(req,res)=>{
     res.send("Welcome to Home")
 })
 
+sub.subscribe("MESSAGES");
+
+sub.on("message", async (channel, message) => {
+    if (channel === 'MESSAGES') {
+        const parsedMessage = JSON.parse(message);
+        const membersSocket = usersSockets(parsedMessage.members);
+        console.log("messages on server",message)
+        io.to(membersSocket).emit(NEW_MESSAGE, {
+            chatId: parsedMessage.chatId,
+            message: parsedMessage.messageForRealTime,
+        });
+    }
+});
 
 io.use((socket,next)=>{
     cookieParser()(socket.request,socket.request.res,
@@ -62,11 +88,9 @@ io.use((socket,next)=>{
 })
 
 io.on("connection",(socket)=>{
-    const user=socket.user
+    const user=socket.user;
     usersSocketIds.set(user._id.toString(),socket.id)
-    
-    
-    socket.on(NEW_MESSAGE,async ({chatId,members,message})=>{
+    socket.on(NEW_MESSAGE,async({chatId,members,message})=>{
         if (!message || !message.trim()) return; 
 
         const messageForRealTime={
@@ -78,19 +102,21 @@ io.on("connection",(socket)=>{
             },
             chat:chatId,
             createdAt:new Date().toISOString()
-        }
+        };
 
         const messageForDB={
             content:message,
             sender:user._id,
             chat:chatId
         }
-        const membersSocket=usersSockets(members)
 
-        io.to(membersSocket).emit(NEW_MESSAGE, {
+        await pub.publish("MESSAGES", JSON.stringify({
             chatId,
-            message: messageForRealTime,
-          });
+            members,
+            messageForRealTime
+        }));
+
+        const membersSocket = usersSockets(members);
 
         io.to(membersSocket).emit(NEW_MESSAGE_ALERT,{chatId})
 
@@ -103,6 +129,7 @@ io.on("connection",(socket)=>{
         }
 
     })
+
 
     socket.on(START_TYPING,({chatId,members})=>{
         const membersSocket=usersSockets(members)
@@ -130,7 +157,7 @@ app.use(errorMiddleware)
 
 server.listen(port,()=>
     {
-        console.log("connected",3000);
+        console.log("connected",port);
     })
 
 export { usersSocketIds };
