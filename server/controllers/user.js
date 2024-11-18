@@ -1,4 +1,5 @@
 import { compare } from "bcrypt";
+import { redis } from "../app.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 import { customError, tryCatch } from "../middlewares/error.js";
@@ -48,10 +49,25 @@ const login = tryCatch(async(req,res,next)=>{
 
 const myProfile=async(req,res,next)=>{
     const userId=req.user._id;
+
+
+    const myProfileKey=`my_profile:${userId}`
+
+    const cachedProfile=await redis.get(myProfileKey);
+
+    let user;
+
+    if(cachedProfile){
+        user=await JSON.parse(cachedProfile);
+    }
+    else{
+        user=await User.findById(userId);
+    }
     
-    const user=await User.findById(userId);
     if(!user)
         return next(new customError("Cannot find user",403));
+
+    await redis.setex(myProfileKey,100,JSON.stringify(user));
 
     return res.status(200).json({
         success:true,
@@ -70,7 +86,19 @@ const logout=async(req,res)=>{
 
 
 const searchUser=tryCatch(async(req,res,next)=>{
+
+    const searchKey=`search_user:${req.user._id}`
+    const cachedSearch=await redis.get(searchKey);
+
     const { name="" }=req.query;
+
+    if(cachedSearch){
+        const users=await JSON.parse(cachedSearch);
+        return res.status(200).json({
+            success:true,
+            users
+        })
+    }
 
     const myChats=await Chat.find({groupChat:false, members:req.user._id});
 
@@ -82,9 +110,12 @@ const searchUser=tryCatch(async(req,res,next)=>{
         name:{$regex:name, $options:"i"}
     })
 
+
     const users=allOtherUsersFromMyChat.map(({_id,name,avatar})=>({
         _id,name,avatar:avatar.url
     }))
+
+    await redis.setex(searchKey,800,JSON.stringify(users));
     
     return res.status(200).json({
         success:true,
@@ -177,7 +208,21 @@ const notifications=tryCatch(async(req,res,next)=>{
 
 
 const availableFriends=tryCatch(async(req,res,next)=>{
+
     const chatId=req.query.chatId;
+
+    const friendsKey=`friends:${req.user._id}-${chatId}`
+
+    const cachedFriends=await redis.get(friendsKey);
+
+    if(cachedFriends){
+        const friends=await JSON.parse(cachedFriends);
+        return res.status(200).json({
+            success:true,
+            friends
+        })
+    }
+
     const chats=await Chat.find({
         members:req.user,
         groupChat:false
@@ -197,6 +242,9 @@ const availableFriends=tryCatch(async(req,res,next)=>{
         {
             const chat=await Chat.findById(chatId);
             const availFriends=friends.filter((i)=>!chat.members.includes(i._id))
+
+            await redis.setex(friendsKey,100,JSON.stringify(availFriends))
+
             return res.status(200).json({
                 success:true,
                 friends:availFriends
@@ -204,6 +252,7 @@ const availableFriends=tryCatch(async(req,res,next)=>{
         }
     else
         {
+            await redis.setex(friendsKey,100,JSON.stringify(friends))
             return res.status(200).json({
                 success:true,
                 friends

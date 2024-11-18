@@ -42,6 +42,16 @@ cloudinary.config({
     api_secret:process.env.CLOUDINARY_API_SECRET
 })
 
+const redis = new Redis({
+    host: process.env.REDIS_HOSTNAME,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD,
+ });
+
+redis.on("connect", () => {
+    console.log("redis connected");
+});
+
 const pub = new Redis({
     host: process.env.REDIS_HOSTNAME,
     port: process.env.REDIS_PORT,
@@ -73,7 +83,6 @@ sub.on("message", async (channel, message) => {
     if (channel === 'MESSAGES') {
         const parsedMessage = JSON.parse(message);
         const membersSocket = usersSockets(parsedMessage.members);
-        console.log("messages on server",message)
         io.to(membersSocket).emit(NEW_MESSAGE, {
             chatId: parsedMessage.chatId,
             message: parsedMessage.messageForRealTime,
@@ -91,6 +100,11 @@ io.on("connection",(socket)=>{
     const user=socket.user;
     usersSocketIds.set(user._id.toString(),socket.id)
     socket.on(NEW_MESSAGE,async({chatId,members,message})=>{
+        let page = 1;
+        while (await redis.del(`chat_msg:${user._id}-${chatId}-${page}`)) {
+            page++;
+        }
+        
         if (!message || !message.trim()) return; 
 
         const messageForRealTime={
@@ -160,5 +174,5 @@ server.listen(port,()=>
         console.log("connected",port);
     })
 
-export { usersSocketIds };
+export { usersSocketIds, redis };
 

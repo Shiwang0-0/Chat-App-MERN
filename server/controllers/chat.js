@@ -1,3 +1,4 @@
+import { redis } from "../app.js";
 import { NEW_MESSAGE, NEW_MESSAGE_ALERT, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 import { customError, tryCatch } from "../middlewares/error.js";
@@ -40,14 +41,25 @@ const createGroup=tryCatch(async(req,res,next)=>{
 
 
 const getMyChats=tryCatch(async(req,res,next)=>{
-    const chats=await Chat.find({members:req.user}).populate("members","name avatar")
+    const myChatKey=`my_chats:${req.user._id}`
 
-    const transformedChats=chats.map(({_id,name,members,groupChat,groupAvatar})=>{
+    const cachedChat=await redis.get(myChatKey);
+
+    let chats;
+
+    if (cachedChat) {
+        chats=await JSON.parse(cachedChat)
+    }
+    else{
+        chats=await Chat.find({members:req.user}).populate("members","name avatar")
+    }
+
+    const transformedChats=chats?.map(({_id,name,members,groupChat,groupAvatar})=>{console.log({_id,name,members,groupChat,groupAvatar})
         const otherMember=getOtherMember(members,req.user);
         return {
             _id,
             groupChat,
-            groupAvatar:groupChat?[groupAvatar.url]:[otherMember.avatar.url],
+            groupAvatar:groupChat?[groupAvatar?.url]:[otherMember?.avatar?.url],
             name:groupChat?name:otherMember.name,
             members:members.reduce((prev,curr)=>{
                 if(curr._id.toString()!==req.user._id.toString())
@@ -59,6 +71,8 @@ const getMyChats=tryCatch(async(req,res,next)=>{
         }
     })
 
+    await redis.setex(myChatKey, 400, JSON.stringify(chats));
+
     return res.status(200).json({
         success:true,
         chats:transformedChats
@@ -67,18 +81,33 @@ const getMyChats=tryCatch(async(req,res,next)=>{
 
 
 const getMyGroups=tryCatch(async(req,res,next)=>{
-    const chats= await Chat.find({
-        members:req.user,
-        groupChat:true,
-        creator:req.user
-    }).populate("members", "name avatar");
 
-    const transformedGroups=chats.map(({name,_id,groupChat,groupAvatar})=>({
+    const myGroupKey=`my_group:${req.user._id}`;
+
+    const cachedGroups=await redis.get(myGroupKey)
+
+    let groups;
+
+    if(cachedGroups){
+        groups=await JSON.parse(cachedGroups)
+    }
+    else{
+        groups=await Chat.find({
+            members:req.user,
+            groupChat:true,
+            creator:req.user
+        }).populate("members", "name avatar");
+    }
+     
+    const transformedGroups=groups.map(({name,_id,groupChat,groupAvatar})=>({
         _id,
         groupChat,
         name,
         groupAvatar
     }))
+
+    await redis.setex(myGroupKey, 120, JSON.stringify(groups))
+
     return res.status(200).json({
         success:true,
         groups:transformedGroups
@@ -87,6 +116,10 @@ const getMyGroups=tryCatch(async(req,res,next)=>{
 
 
 const addMembers=tryCatch(async (req,res,next) => {
+
+    const myGroupKey=`my_group:${req.user._id}`;
+
+    await redis.del(myGroupKey);
 
     const {chatId,members}=req.body;
 
@@ -132,6 +165,10 @@ const addMembers=tryCatch(async (req,res,next) => {
 
 const removeMembers=tryCatch(async (req,res,next) => {
 
+    const myGroupKey=`my_group:${req.user._id}`;
+
+    await redis.del(myGroupKey);
+
     const {chatId,userId}=req.body;
 
     const [chat,usersToBeRemoved]=await Promise.all([
@@ -171,6 +208,10 @@ const removeMembers=tryCatch(async (req,res,next) => {
 
 
 const leaveGroup=tryCatch(async (req,res,next) => {
+
+    const myGroupKey=`my_group:${req.user._id}`;
+
+    await redis.del(myGroupKey);
 
     const chatId=req.params.id;
 
@@ -303,6 +344,10 @@ const getChatDetail=tryCatch(async (req,res,next) => {
 
 const renameGroup=tryCatch(async (req,res,next) => {
 
+    const myGroupKey=`my_group:${req.user._id}`;
+
+    await redis.del(myGroupKey);
+
     const chatId=req.params.id;
     const {name}=req.body
 
@@ -331,6 +376,12 @@ const renameGroup=tryCatch(async (req,res,next) => {
 
 
 const deleteChats=tryCatch(async (req,res,next) => {
+
+    const myGroupKey=`my_group:${req.user._id}`;
+    const myChatKey=`my_chats:${req.user._id}`
+
+    await redis.del(myGroupKey);
+    await redis.del(myChatKey);
 
     const chatId=req.params.id;
 
@@ -371,15 +422,25 @@ const deleteChats=tryCatch(async (req,res,next) => {
 
 
 const chatMessages=tryCatch(async (req,res,next) => {
-
     const chatId=req.params.id;
     const {page=1}=req.query;
+    const chatMsgKey=`chat_msg:${req.user._id}-${chatId}-${page}`
+    const cachedChatMsg=await redis.get(chatMsgKey);
+
+    if(cachedChatMsg){
+        const {messages, totalPages}=await JSON.parse(cachedChatMsg);
+
+        return res.status(200).json({
+            success:true,
+            messages:messages.reverse(),
+            totalPages
+        })
+    }
 
     const chat=await Chat.findById(chatId);
 
     if(!chat)
         return next(new customError("Chat not found",400));
-    
     if(!chat.members.includes(req.user._id.toString()))
         return next(new customError("You are not allowed to access this chat",403))
 
@@ -397,6 +458,11 @@ const chatMessages=tryCatch(async (req,res,next) => {
     ])
 
     const totalPages=Math.ceil(totalCount/messagePerPage) || 0;
+
+    await redis.setex(chatMsgKey, 150, JSON.stringify({
+        messages: messages,
+        totalPages
+    }));
 
     res.status(200).json({
         success:true,
