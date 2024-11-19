@@ -1,5 +1,8 @@
 # Chat-App-MERN
 
+[![](https://skillicons.dev/icons?i=react,nodejs,mongodb,express,javascript,redux,materialui,redis)](https://skillicons.dev)![](https://github.com/Shiwang0-0/Chat-App-MERN/blob/main/client/public/images/socket.io.png)
+
+
 ## Run Locally
 Step 1: Clone the Repository   
 
@@ -13,11 +16,9 @@ Step 3.1: In the server folder, create .env file and add the following
             
 Step 4: run command npm install and then npm run dev   
 
-Step 5: Split the terminal   
+Step 5: In the CHAT-APP-MERN folder type cd server    
 
-Step 6: In the CHAT-APP-MERN folder type cd server    
-
-Step 6.1: In the server folder, create .env file and add the following   
+Step 5.1: In the server folder, create .env file and add the following   
  
             MONGO_URI = type your mongoose connection string here   
             
@@ -25,17 +26,15 @@ Step 6.1: In the server folder, create .env file and add the following
             
             JWT_SECRET= "type your jwt secret here"   
             
-            CLIENT_URL= not needed until you are hosting the application   
-            
             CLOUDINARY_CLOUD_NAME= type your cloudinary name here   
             
             CLOUDINARY_API_KEY= type your cloudinary api key here   
             
             CLOUDINARY_API_SECRET= type your cloudinary secret here   
             
-Step 7: run command npm install and then npm run dev   
+Step 6: run command npm install and then npm run dev   
 
-Step 8: Open Browser,go to localhost:5143   
+Step 7: Open Browser, go to localhost:5143   
 
 
 
@@ -63,3 +62,11 @@ The Project uses Cloudinary as a cloud storage to store User’s Avatar, and att
 
 #### Authentication And Authorization
 User’s Authentication and Authorization across the application is done using Json Web Token and Express Validator, It ensures that Unauthenticated user cannot access the data from the Database and only Authorized user gets his/her respective data.
+
+
+#### Redis and Pub/Sub
+To make the application response fast, Redis is used.
+To Scale up the web socket connection, Pub/Sub technique is used with Redis.This ensures that socket servers on different port are subscribed to same data.
+( a brief visual representation on how redis pub/sub works in given below )
+
+![redis-pub/sub](https://github.com/Shiwang0-0/Chat-App-MERN/blob/main/client/public/images/redis%3Apub-sub.png)
