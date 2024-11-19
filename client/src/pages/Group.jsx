@@ -13,7 +13,7 @@ import { CustomMutationHook } from "../hooks/CustomMutationHook";
 import { useErrors } from "../hooks/ErrorHook";
 import { transformImage } from "../lib/fileFormat";
 import { useChatDetailsQuery, useDeleteChatMutation, useMyGroupsQuery, useRemoveGroupMemberMutation, useRenameGroupMutation } from "../redux/api/api";
-import { setIsAddMember } from "../redux/reducers/others.";
+import { setIsAddMember } from "../redux/reducers/others";
 
 
 const Group = () => {

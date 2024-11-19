@@ -22,9 +22,8 @@ const ChatList = (
             const newMessageAlert = newMessagesAlert.find(
               ({ chatId }) => chatId === _id
             )
-            const isOnline = members?.some((member) => onlineUser.includes(member));
             return (
-              <ChatItem index={index} newMessageAlert={newMessageAlert} isOnline={isOnline} avatar={groupAvatar} name={name} _id={_id} key={_id} groupChat={groupChat} sameSender={chatId === _id} handleDeleteChat={handleDeleteChat} />
+              <ChatItem index={index} newMessageAlert={newMessageAlert} avatar={groupAvatar} name={name} _id={_id} key={_id} groupChat={groupChat} sameSender={chatId === _id} handleDeleteChat={handleDeleteChat} />
             )
           }
           )}

@@ -1,7 +1,7 @@
 import { usersSocketIds } from "../app.js";
 
 export const getOtherMember=(members,userId)=>{
-    return members.find((members)=>members._id.toString()!==userId._id.toString());
+    return members.find((members)=>members?._id.toString()!==userId?._id.toString());
 }
 
 export const usersSockets = (members=[]) => {

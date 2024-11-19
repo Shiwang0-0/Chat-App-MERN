@@ -5,8 +5,7 @@ import { fileFormat } from '../../lib/fileFormat';
 import RenderAttachment from "./RenderAttachment";
 import { senderColor,contentColor, timeColor } from '../../constants/colors';
 
-
-const MessageComponent = memo(({user,message}) => {
+const MessageComponent =memo(React.forwardRef(({user,message},ref) => {
     const {attachments,content,sender,createdAt}=message; 
     const sameSender=sender?._id==user?._id;
     const timeAgo=moment(createdAt).fromNow();
@@ -44,6 +43,6 @@ const MessageComponent = memo(({user,message}) => {
         <Typography color={timeColor}>{timeAgo}</Typography>
         </div>
   )
-})
+}))
 
 export default MessageComponent

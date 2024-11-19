@@ -4,7 +4,7 @@ import { AppBar, Backdrop, Box, Tooltip, Typography } from '@mui/material';
 import React, { Suspense, lazy } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { royalBlue } from '../../constants/colors';
-import { setIsMobile, setIsSearch } from '../../redux/reducers/others.';
+import { setIsMobile, setIsSearch } from '../../redux/reducers/others';
 import { bgcolorHeader } from '../../constants/colors';
 const SearchDialog = lazy(() => import("../specific/SearchDialog"));
 

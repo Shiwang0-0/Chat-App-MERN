@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSendAttachmentsMutation } from '../../redux/api/api';
-import { setIsFileMenu, setIsUploadingLoader } from '../../redux/reducers/others.';
+import { setIsFileMenu, setIsUploadingLoader } from '../../redux/reducers/others';
 
 const AttachmentDialog = ({anchorEl,chatId}) => {
 

@@ -4,7 +4,7 @@ import { random2 } from '../../constants/colors'
 import { transformImage } from '../../lib/fileFormat'
 import { StyledLink } from '../styles/StyledComponent'
 
-const ChatItem = ({ avatar=[], name, _id, groupChat, sameSender, isOnline, newMessageAlert, handleDeleteChat }) => {
+const ChatItem = ({ avatar=[], name, _id, groupChat, sameSender, newMessageAlert, handleDeleteChat }) => {
   
   return (
     <StyledLink to={`/chat/${_id}`} onContextMenu={(e)=>handleDeleteChat(e,_id,groupChat)}> 
@@ -17,11 +17,6 @@ const ChatItem = ({ avatar=[], name, _id, groupChat, sameSender, isOnline, newMe
     <Typography>You have {newMessageAlert.count} new messages</Typography>
     )}
     </Stack>
-
-      {
-        isOnline && (<Box sx={{ width:"10px", height:"10px", borderRadius:"50%", backgroundColor:"green"
-        }}/>
-     )}
       </div>
     </StyledLink>
   )

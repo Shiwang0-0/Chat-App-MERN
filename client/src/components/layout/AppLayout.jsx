@@ -8,7 +8,7 @@ import { useSocketEvents } from '../../hooks/SocketEvents'
 import { getOrSaveFromStorage } from '../../lib/localStorage'
 import { useMyChatsQuery } from '../../redux/api/api'
 import { incrementNotification, setNewMessagesAlert } from '../../redux/reducers/chat'
-import { setIsDeleteMenu, setIsMobile, setSelectedDeleteChat } from '../../redux/reducers/others.'
+import { setIsDeleteMenu, setIsMobile, setSelectedDeleteChat } from '../../redux/reducers/others'
 import { getSocket } from '../../socket'
 import Title from '../shared/Title'
 import ChatList from '../specific/ChatList'
@@ -38,8 +38,6 @@ const AppLayout = () => (WrapperComponent) => {
     const { isMobile } = useSelector((state) => state.misc)
     const { newMessagesAlert } = useSelector((state) => state.chat)
     const { isLoading, isError, data, error, refetch } = useMyChatsQuery("");
-
-    console.log("app",user)
 
 
     const handleMobileClose = () => {

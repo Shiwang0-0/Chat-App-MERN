@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { royalBlue } from '../../constants/colors';
 import { resetNotificationCount } from '../../redux/reducers/chat';
-import { setIsNewGroup, setIsNotification, setIsSearch } from '../../redux/reducers/others.';
+import { setIsNewGroup, setIsNotification, setIsSearch } from '../../redux/reducers/others';
 import { NavigationBars } from '../shared/NavigationBars';
 import { bgColorPanel } from '../../constants/colors';
 

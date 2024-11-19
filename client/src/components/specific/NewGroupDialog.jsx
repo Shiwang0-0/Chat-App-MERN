@@ -21,7 +21,7 @@ import {
   useAvailableFriendsQuery,
   useNewGroupMutation,
 } from "../../redux/api/api";
-import { setIsNewGroup } from "../../redux/reducers/others.";
+import { setIsNewGroup } from "../../redux/reducers/others";
 import UserItem from "../shared/UserItem";
 
 const NewGroupDialog = () => {

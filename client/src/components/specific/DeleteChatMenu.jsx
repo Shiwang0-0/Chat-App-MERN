@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { CustomMutationHook } from '../../hooks/CustomMutationHook'
 import { useDeleteChatMutation, useLeaveGroupMutation } from '../../redux/api/api'
-import { setIsDeleteMenu } from '../../redux/reducers/others.'
+import { setIsDeleteMenu } from '../../redux/reducers/others'
 
 const DeleteChatMenu = ({ dispatch, deleteAnchor }) => {
 

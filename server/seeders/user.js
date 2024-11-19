@@ -18,8 +18,6 @@ const createUser=tryCatch(async(numUsers)=>{
         users.push(temp);
     }
     await Promise.all(users);
-
-    console.log("Users created",numUsers);
     process.exit(1);
 })
 

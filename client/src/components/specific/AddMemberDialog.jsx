@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CustomMutationHook } from "../../hooks/CustomMutationHook";
 import { useErrors } from "../../hooks/ErrorHook";
 import { useAddGroupMembersMutation, useAvailableFriendsQuery } from "../../redux/api/api";
-import { setIsAddMember } from "../../redux/reducers/others.";
+import { setIsAddMember } from "../../redux/reducers/others";
 import UserItem from "../shared/UserItem";
 
 

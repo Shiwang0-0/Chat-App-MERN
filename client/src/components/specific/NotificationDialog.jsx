@@ -5,7 +5,7 @@ import React, { memo } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAcceptFriendRequestMutation, useGetNotificationsQuery } from '../../redux/api/api';
-import { setIsNotification } from '../../redux/reducers/others.';
+import { setIsNotification } from '../../redux/reducers/others';
 
 const NotificationDialog = () => {
 

@@ -37,10 +37,6 @@ const ProfileSetting = () => {
   return (
     <div>
       <Box sx={{ bgcolor:bgColorPanel, height: '90vh', display: "flex", flexDirection: "column", alignItems: "center", mt: "10px", ml: "5px", mr: "5px", overflow: "none",borderRadius:"20px 20px 20px 20px" }} >
-      <NavigationBars title={"Edit Profile"} icon={<EditIcon/>} onClickfunc={navigateToHome}/>
-      <NavigationBars title={"Add an Exisiting Account"} icon={<SupervisedUserCircleIcon/>} onClickfunc={navigateToHome}/>
-      <NavigationBars title={"Deactivate account"} icon={<AutoDeleteIcon/>} onClickfunc={navigateToHome}/>
-      <NavigationBars title={"Blocked users"} icon={<BlockIcon/>} onClickfunc={navigateToHome}/>
       <NavigationBars title={"Logout"} icon={<LogoutIcon/>} onClickfunc={logout}/>
       </Box>
     </div>

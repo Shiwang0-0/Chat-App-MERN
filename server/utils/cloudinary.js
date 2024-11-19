@@ -2,7 +2,6 @@ import { v2 as cloudinary } from "cloudinary";
 import { v4 as uuid } from "uuid";
 import { toBase64 } from "../lib/helper.js";
 const uploadFilesToCloudinary = async (files = []) => {
-  console.log("img",files)
   const uploadPromises = files.map((file) => {
     return new Promise((resolve, reject) => {
       cloudinary.uploader.upload(
@@ -37,8 +36,5 @@ const uploadFilesToCloudinary = async (files = []) => {
   }
 };
 
-const deleteFilesFromCloudinary=(publicIds)=>{
-    console.log("files deleted")
-}
 
-export { deleteFilesFromCloudinary, uploadFilesToCloudinary };
+export { uploadFilesToCloudinary };

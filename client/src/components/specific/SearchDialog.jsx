@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CustomMutationHook } from '../../hooks/CustomMutationHook';
 import { useLazySearchUserQuery, useSendFriendRequestMutation } from '../../redux/api/api';
-import { setIsSearch } from '../../redux/reducers/others.';
+import { setIsSearch } from '../../redux/reducers/others';
 import UserItem from '../shared/UserItem';
 
 const SearchDialog = () => {
