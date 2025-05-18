@@ -36,5 +36,11 @@ const uploadFilesToCloudinary = async (files = []) => {
   }
 };
 
+const deleteFilesFromCloudinary=async(files=[])=>{
+  for(data in files){
+    cloudinary.v2.uploader.destroy(data);
+  }
+}
 
-export { uploadFilesToCloudinary };
+
+export { uploadFilesToCloudinary, deleteFilesFromCloudinary};

@@ -16,6 +16,8 @@ import { Message } from "./models/message.js";
 import chatRoute from "./routes/chat.js";
 import userRoute from "./routes/user.js";
 import { connectDB } from "./utils/database.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 
 const app=express();
@@ -73,9 +75,27 @@ app.use(cors(corsOption))
 app.use("/api/v1/user",userRoute);
 app.use("/api/v1/chat",chatRoute);
 
-app.get("/",(req,res)=>{
-    res.send("Welcome to Home")
-})
+// ----------- Deployment  ------------
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const _dirname1 = path.resolve(__dirname, '..')
+
+if(process.env.NODE_ENV=='production'){
+    app.use(express.static(path.join(_dirname1,"/client/dist")));
+
+    app.get('*',(req,res)=>{
+        res.sendFile(path.resolve(_dirname1,"client","dist","index.html"));
+    });
+}
+else{
+    app.get("/",(req,res)=>{
+        res.send("Success");
+    })
+}
+
+// ----------- Deployment  ------------
 
 sub.subscribe("MESSAGES");
 
