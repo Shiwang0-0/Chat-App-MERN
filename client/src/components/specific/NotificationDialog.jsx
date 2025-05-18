@@ -26,7 +26,7 @@ const NotificationDialog = () => {
           toast.success(res.data.message)
       }
       else{
-        toast.error(res.data?.error || "Something went wrong")
+        toast.error(res.data?.error || "Friend Request Rejected")
       }
     }
     catch(error)

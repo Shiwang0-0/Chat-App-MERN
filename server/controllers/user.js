@@ -126,6 +126,7 @@ const searchUser=tryCatch(async(req,res,next)=>{
 
 const sendFriendRequest=tryCatch(async(req,res,next)=>{
     const {userId}=req.body;
+    const searchKey=`search_user:${req.user._id}`
 
     const isRequestAlreadySent=await Request.findOne({
             $or:[
@@ -133,16 +134,27 @@ const sendFriendRequest=tryCatch(async(req,res,next)=>{
                 {sender:userId,receiver:req.user._id},
         ]})
     
-    if(isRequestAlreadySent)
+    if(isRequestAlreadySent){
         next(new customError("Request already sent",400))
+        return;
+    }
 
+    const isAlreadyAFriend = await Chat.findOne({
+        members: { $all: [req.user._id, userId] },
+        groupChat: false,
+    });
+
+    if (isAlreadyAFriend) {
+        next(new customError("User is already a friend", 400));
+        return;
+    }
     await Request.create({
         sender:req.user._id,
         receiver:userId
     })
 
     emitEvent(req,NEW_REQUEST,[userId])
-
+    await redis.del(searchKey);
     return res.status(200).json({
         success:true,
         message:"Request sent successfully"
@@ -156,17 +168,31 @@ const acceptFriendRequest=tryCatch(async(req,res,next)=>{
     const request= await Request.findById(requestId).populate("sender","name").populate("receiver","name")
     
     if(!request)
-        next(new customError("Request not found",400))
+        return next(new customError("Request not found",400))
 
     if(request.receiver._id.toString() != req.user._id.toString())
-        next(new customError("You are not authorized to accept the request",401));
+        return next(new customError("You are not authorized to accept the request",401));
+
+    const receiverId = request.receiver._id.toString();
+    const senderId = request.sender._id.toString();
+
+    const receiverRequestsKey = `friend_requests:${receiverId}`;
+    const senderRequestsKey = `friend_requests:${senderId}`;
+    const receiverChatsKey = `my_chats:${receiverId}`;
+    const senderChatsKey = `my_chats:${senderId}`;
+
+
     if(!accept)
         {
             await request.deleteOne();
+            await Promise.all([
+                redis.del(receiverRequestsKey),
+                redis.del(senderRequestsKey)
+            ]);
             return res.status(200).json({
-                success:true,
-                message:"friend request rejected"
-            })
+                success: false,
+                message: "Friend request rejected"
+            });
         }
 
     const members=[request.sender._id, request.receiver._id]
@@ -175,7 +201,20 @@ const acceptFriendRequest=tryCatch(async(req,res,next)=>{
         Chat.create({members,name:`${request.sender.name}-${request.receiver.name}`}), 
         request.deleteOne()
     ])
-    emitEvent(req,REFETCH_CHATS,members);
+
+    const [receiverChats, senderChats] = await Promise.all([
+        Chat.find({ members: receiverId }).populate("members", "name avatar"),
+        Chat.find({ members: senderId }).populate("members", "name avatar")
+    ]);
+
+    await Promise.all([
+        redis.del(receiverRequestsKey, senderRequestsKey),
+        redis.setex(receiverChatsKey, 800, JSON.stringify(receiverChats)),
+        redis.setex(senderChatsKey, 800, JSON.stringify(senderChats))
+    ]);
+
+
+    emitEvent(req,REFETCH_CHATS, [senderId, receiverId]);
 
     return res.status(200).json({
         success:true,
@@ -211,9 +250,11 @@ const availableFriends=tryCatch(async(req,res,next)=>{
 
     const chatId=req.query.chatId;
 
-    const friendsKey=`friends:${req.user._id}-${chatId}`
+    const friendsKeyPattern = `friends:${req.user._id}-*`;
+    const keysToInvalidate = await redis.keys(friendsKeyPattern);
+    await Promise.all(keysToInvalidate.map((key) => redis.del(key)));
 
-    const cachedFriends=await redis.get(friendsKey);
+    const cachedFriends=await redis.get(friendsKeyPattern);
 
     if(cachedFriends){
         const friends=await JSON.parse(cachedFriends);
@@ -243,7 +284,7 @@ const availableFriends=tryCatch(async(req,res,next)=>{
             const chat=await Chat.findById(chatId);
             const availFriends=friends.filter((i)=>!chat.members.includes(i._id))
 
-            await redis.setex(friendsKey,100,JSON.stringify(availFriends))
+            await redis.setex(friendsKeyPattern,100,JSON.stringify(availFriends))
 
             return res.status(200).json({
                 success:true,
@@ -252,7 +293,7 @@ const availableFriends=tryCatch(async(req,res,next)=>{
         }
     else
         {
-            await redis.setex(friendsKey,100,JSON.stringify(friends))
+            await redis.setex(friendsKeyPattern,100,JSON.stringify(friends))
             return res.status(200).json({
                 success:true,
                 friends

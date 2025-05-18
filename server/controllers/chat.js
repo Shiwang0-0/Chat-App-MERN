@@ -377,12 +377,6 @@ const renameGroup=tryCatch(async (req,res,next) => {
 
 const deleteChats=tryCatch(async (req,res,next) => {
 
-    const myGroupKey=`my_group:${req.user._id}`;
-    const myChatKey=`my_chats:${req.user._id}`
-
-    await redis.del(myGroupKey);
-    await redis.del(myChatKey);
-
     const chatId=req.params.id;
 
     const chat=await Chat.findById(chatId);
@@ -411,6 +405,12 @@ const deleteChats=tryCatch(async (req,res,next) => {
         chat.deleteOne(),
         Message.deleteMany({chat:chatId}),
     ]);
+
+    const cacheKeys = chat.members.flatMap(memberId => [
+        `my_group:${memberId}`,
+        `my_chats:${memberId}`
+    ]);
+    await redis.del(...cacheKeys);
 
     emitEvent(req,REFETCH_CHATS,chat.members)
 
