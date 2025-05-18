@@ -68,6 +68,9 @@ const Login = () => {
     const errors = validate(formValues, isLogin);
     setFormErrors(errors);
     if (Object.keys(errors).length !== 0) {
+      toast.dismiss(toastId);
+      setFormErrors(errors);
+      setIsLoading(false);
       return;
     }
     
@@ -87,7 +90,7 @@ const Login = () => {
       dispatch(userExist(data.user));
       toast.success(data.message,{id:toastId});
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
+      toast.error(error?.response?.data?.message || "Something went wrong", {id:toastId});
     }
     finally{
       setIsLoading(false)
@@ -100,6 +103,9 @@ const Login = () => {
     const errors = validate(formValues, isLogin);
     setFormErrors(errors);
     if (Object.keys(errors).length !== 0) {
+      toast.dismiss(toastId);
+      setFormErrors(errors);
+      setIsLoading(false);
       return;
     }
     try {
@@ -120,7 +126,7 @@ const Login = () => {
       dispatch(userExist(data.user));
       toast.success(data.message,{id:toastId});
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
+      toast.error(error?.response?.data?.message || "Something went wrong", {id:toastId});
     }
     finally{
       setIsLoading(false)
